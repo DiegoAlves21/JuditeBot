@@ -1,15 +1,16 @@
-﻿using DAO.Interface;
+﻿using Model.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DAO.Models
+namespace Model
 {
-    public class StatusPedido : IEntity
+    public class Produto : IEntity
     {
         public int Id { get; set; }
-        public enum statusPedido { EM_ESPERA, SAIU_PARA_ENTREGA, ENTREGUE }
+        public string nome { get; set; }
+        public double valor { get; set; }
     }
 }

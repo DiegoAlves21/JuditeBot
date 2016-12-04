@@ -1,19 +1,18 @@
 ﻿using DAO.Context;
 using DAO.Interface;
-using Microsoft.Data.Entity;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DAO.Extensoes;
 
 namespace DAO.Repositorio
 {
     public abstract class Repositorio<TEntity> : IDisposable,
        IRepositorio<TEntity> where TEntity : class
     {
-        JuditeBoteContext ctx = new JuditeBoteContext();
+        JuditeBotContext ctx = new JuditeBotContext();
         public IQueryable<TEntity> GetAll()
         {
             return ctx.Set<TEntity>();

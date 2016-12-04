@@ -1,11 +1,11 @@
-﻿using DAO.Interface;
+﻿using Model.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DAO.Models
+namespace Model
 {
     public class Pedido : IEntity
     {
@@ -20,7 +20,7 @@ namespace DAO.Models
         public virtual MeioPagamento.meioPagamento meioPagamento { get; set; }
 
         public int produtoId { get; set; }
-        public Dictionary<Produto, Double> produtos { get; set; }
+        public virtual List<Produto> produtos { get; set; }
 
     }
 }
