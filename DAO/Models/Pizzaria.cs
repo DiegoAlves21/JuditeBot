@@ -1,0 +1,28 @@
+﻿using DAO.Interface;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DAO.Models
+{
+    public class Pizzaria : IEntity
+    {
+        public int Id { get; set; }
+        public string nome { get; set; }
+        public double taxaEntrega { get; set; }
+
+        public int cardapioId { get; set; }
+        public virtual IList<Produto> cardapio { get; set; }
+
+        public int meioPagamentoId { get; set; }
+        public virtual IList<MeioPagamento> meioPagamento { get; set; }
+
+        public int pedidoId { get; set; }
+        public virtual IList<Pedido> pedidos { get; set; }
+
+        public int usuarioId { get; set; }
+        public virtual Usuario usuario { get; set; }
+    }
+}
