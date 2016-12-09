@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public class StatusPedido
+    public class StatusPedido : IEntity
     {
-        public enum statusPedido { EM_ESPERA, SAIU_PARA_ENTREGA, ENTREGUE }
+        public int Id { get; set; }
+        public string statusPedido { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace Model
 {
     public class Retorno
     {
-        public string codRetorno { get; set; }
+        //public string codRetorno { get; set; }
         public string msgRetorno { get; set; }
         public dynamic entidade { get; set; }
     }

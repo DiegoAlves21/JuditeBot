@@ -12,7 +12,9 @@ namespace Model
         public int Id { get; set; }
         public string nome { get; set; }
         public double taxaEntrega { get; set; }
-        public IList<MeioPagamento.meioPagamento> meioPagamento { get; set; }
+
+        public int meioPagamentoId { get; set; }
+        public virtual IList<MeioPagamento> meioPagamento { get; set; }
 
         public int produtoId { get; set; }
         public virtual IList<Produto> cardapio { get; set; }

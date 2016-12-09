@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public class MeioPagamento
+    public class MeioPagamento : IEntity
     {
-        public enum meioPagamento { DEBITO, CREDITO, SODEXO, TR }
+        public int Id { get; set; }
+        public string meioPagamento { get; set; }
     }
 }

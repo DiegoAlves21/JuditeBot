@@ -10,7 +10,7 @@ namespace Model
     public class Usuario : IEntity
     {
         public int Id { get; set; }
-        public string nome { get; set; }
-        public string senha { get; set; }
+        public string username { get; set; }
+        public string password { get; set; }
     }
 }
