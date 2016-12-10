@@ -1,4 +1,5 @@
 ﻿using DAO.BBL;
+using DAO.MapperManual;
 using Model;
 using System;
 using System.Collections.Generic;
@@ -71,9 +72,10 @@ namespace JuditeBot.Controllers
         {
             Retorno resultado = new Retorno();
             Usuario user = new Usuario();
+            Pizzaria pizzaria = new Pizzaria();
 
             try
-            {
+             {
                 using (var repositorio = new UsuarioRepositorio())
                 {
                     if (usuario != null)
@@ -102,7 +104,7 @@ namespace JuditeBot.Controllers
 
                 if (user != null)
                 {
-                    var pizzaria = buscaPizzaria(user.Id);
+                    pizzaria = buscaPizzaria(user.Id);
 
                     if(pizzaria == null)
                     {
@@ -142,7 +144,8 @@ namespace JuditeBot.Controllers
             {
                 using (var repositorio = new PizzariaRepositorio())
                 {
-                    pizzaria = repositorio.Get(p => p.usuario.Id == id).SingleOrDefault();
+                    var pizzariaGet = (Pizzaria)repositorio.Get(p => p.usuario.Id == id).ToList().SingleOrDefault();
+                    pizzaria = MapperManual.MontaModel(pizzariaGet);
                     repositorio.Dispose();
                     return pizzaria;
                 }
@@ -152,5 +155,6 @@ namespace JuditeBot.Controllers
                 return null;
             }
         }
+
     }
 }

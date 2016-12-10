@@ -17,6 +17,11 @@ namespace JuditeBot
             //var corsAttr = new EnableCorsAttribute("http://localhost:49935/swagger/docs/v1", "*", "*");
             //config.EnableCors(corsAttr);
 
+            var json = config.Formatters.JsonFormatter;
+            json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.Objects;
+            config.Formatters.Remove(config.Formatters.XmlFormatter);
+            json.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+
             // Web API routes
             config.MapHttpAttributeRoutes();
 
@@ -25,6 +30,8 @@ namespace JuditeBot
                 routeTemplate: "JuditeBot/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            //AutoMapperConfig.RegisterMappings();
         }
     }
 }

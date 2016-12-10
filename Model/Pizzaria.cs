@@ -13,13 +13,10 @@ namespace Model
         public string nome { get; set; }
         public double taxaEntrega { get; set; }
 
-        public int meioPagamentoId { get; set; }
         public virtual IList<MeioPagamento> meioPagamento { get; set; }
 
-        public int produtoId { get; set; }
         public virtual IList<Produto> cardapio { get; set; }
 
-        public int pedidoId { get; set; }
         public virtual IList<Pedido> pedidos { get; set; }
 
         public int usuarioId { get; set; }
