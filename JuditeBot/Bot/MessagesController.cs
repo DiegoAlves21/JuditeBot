@@ -20,24 +20,36 @@ namespace JuditeBot.Bot
         {
             if (activity.Type == ActivityTypes.Message)
             {
-                ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
-                // calculate something for us to return
-                //int length = (activity.Text ?? string.Empty).Length;
+                 ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
 
-                Activity reply = new Activity();
-
-                if (activity.Text.ToString().ToUpper() == "DIEGO")
+                if (activity.Text.ToString().ToUpper() == "SIMPIZZA")
                 {
-                    reply = activity.CreateReply("Koé Diego, veio pedir uma pizza ou só bater papo?");
+                    Activity replyToConversation = activity.CreateReply("Ótimo, vamos te enviar nosso Cardápio!");
+                    var reply = await connector.Conversations.SendToConversationAsync(replyToConversation);
+                }
+                else if(activity.Text.ToString().ToUpper() == "NAOPIZZA")
+                {
+                    Activity replyToConversation = activity.CreateReply("Tudo bem, quem sabe na próxima!");
+                    var reply = await connector.Conversations.SendToConversationAsync(replyToConversation);
                 }
                 else
                 {
-                    reply = activity.CreateReply("Não conheço você, mete o pé!");
+                    var reply = await connector.Conversations.SendToConversationAsync(BotaoInicial(activity));
                 }
+                
+                //Activity reply = new Activity();
 
-                // return our reply to the user
-                //Activity reply = activity.CreateReply($"You sent {activity.Text} which was {length} characters");
-                await connector.Conversations.ReplyToActivityAsync(reply);
+                //reply = activity.CreateReply("Koé " + activity.From.Name + ", veio pedir uma pizza ou só bater papo?");
+                //reply.Attachments = new List<Attachment>();
+
+                //var teste = new { text = "Retornando um botão", buttons = new [] { new { type = "imBack", title = "BLT", value = "1" } } };
+
+
+                //reply.Attachments.Add(new Attachment { Content = teste });
+                //reply.AttachmentLayout = "List";
+                //reply.Type = "message";
+
+                //await connector.Conversations.ReplyToActivityAsync(reply);
             }
             else
             {
@@ -75,5 +87,83 @@ namespace JuditeBot.Bot
 
             return null;
         }
+
+        private Activity BotaoInicial(Activity activity)
+        {
+            Activity replyToConversation = activity.CreateReply("Olá " + activity.From.Name);
+            replyToConversation.Recipient = activity.From;
+            replyToConversation.Type = "message";
+            replyToConversation.Attachments = new List<Attachment>();
+            List<CardImage> cardImages = new List<CardImage>();
+            cardImages.Add(new CardImage(url: "http://www.nutrivifalcao.com.br/wp-content/uploads/2016/11/pizza-site-or.jpg"));
+            cardImages.Add(new CardImage(url: "http://www.nutrivifalcao.com.br/wp-content/uploads/2016/11/pizza-site-or.jpg"));
+            List<CardAction> cardButtons = new List<CardAction>();
+            CardAction plButton = new CardAction()
+            {
+                Value = "simPizza",
+                Type = "postBack",
+                Title = "Sim"
+            };
+
+            CardAction plButton2 = new CardAction()
+            {
+                Value = "naoPizza",
+                Type = "postBack",
+                Title = "Não"
+            };
+            cardButtons.Add(plButton);
+            cardButtons.Add(plButton2);
+
+            HeroCard plCard = new HeroCard()
+            {
+                Title = "Fast Pizza",
+                Subtitle = "Aceita uma Pizza?",
+                Images = cardImages,
+                Buttons = cardButtons
+            };
+            Attachment plAttachment = plCard.ToAttachment();
+            replyToConversation.Attachments.Add(plAttachment);
+
+            return replyToConversation;
+        }
+
+        private Activity BotaoCardapio(Activity activity)//Falta Implementar
+        {
+            Activity replyToConversation = activity.CreateReply("Olá " + activity.From.Name);
+            replyToConversation.Recipient = activity.From;
+            replyToConversation.Type = "message";
+            replyToConversation.Attachments = new List<Attachment>();
+            List<CardImage> cardImages = new List<CardImage>();
+            cardImages.Add(new CardImage(url: "http://www.nutrivifalcao.com.br/wp-content/uploads/2016/11/pizza-site-or.jpg"));
+            List<CardAction> cardButtons = new List<CardAction>();
+            CardAction plButton = new CardAction()
+            {
+                Value = "simPizza",
+                Type = "postBack",
+                Title = "Sim"
+            };
+
+            CardAction plButton2 = new CardAction()
+            {
+                Value = "naoPizza",
+                Type = "postBack",
+                Title = "Não"
+            };
+            cardButtons.Add(plButton);
+            cardButtons.Add(plButton2);
+
+            HeroCard plCard = new HeroCard()
+            {
+                Title = "Fast Pizza",
+                Subtitle = "Aceita uma Pizza?",
+                Images = cardImages,
+                Buttons = cardButtons
+            };
+            Attachment plAttachment = plCard.ToAttachment();
+            replyToConversation.Attachments.Add(plAttachment);
+
+            return replyToConversation;
+        }
+
     }
 }

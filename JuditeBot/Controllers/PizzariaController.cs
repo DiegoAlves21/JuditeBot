@@ -215,14 +215,14 @@ namespace JuditeBot.Controllers
 
         }
 
-        [Route("/pizzarias/{pizzariaId}/orders/{orderId}/deliver")]
+        [Route("pizzarias/{pizzariaId}/orders/{orderId}/deliver")]
         [HttpPost]
         public JsonResult<Retorno> MudaStatusDeliver(int? pizzariaId, int? orderId)
         {
             return AtualizaStatus(pizzariaId, orderId, "SAIU_PARA_ENTREGA");
         }
 
-        [Route("/pizzarias/{pizzariaId}/orders/{orderId}/finish")]
+        [Route("pizzarias/{pizzariaId}/orders/{orderId}/finish")]
         [HttpPost]
         public JsonResult<Retorno> MudaStatusFinish(int? pizzariaId, int? orderId)
         {
