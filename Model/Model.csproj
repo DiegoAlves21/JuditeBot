@@ -43,6 +43,7 @@
     <Compile Include="Interface\IEntity.cs" />
     <Compile Include="MeioPagamento.cs" />
     <Compile Include="Pedido.cs" />
+    <Compile Include="PedidoTemporario.cs" />
     <Compile Include="Pizzaria.cs" />
     <Compile Include="Produto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,4 +1,4 @@
-﻿using DAO.BBL;
+﻿﻿using DAO.BBL;
 using Microsoft.Bot.Connector;
 using Model;
 using System;
@@ -8,16 +8,16 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
- 
+
 namespace JuditeBot.Bot
 {
     [BotAuthentication]
     public class MessagesController : ApiController
     {
- 
+
         const string id = "8655481";
- 
- 
+
+
         /// <summary>
         /// POST: JuditeBot/Messages
         /// Receive a message from a user and reply to it
@@ -28,23 +28,72 @@ namespace JuditeBot.Bot
             {
                 ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
 
-                var latitude = activity.Entities[0].Properties.First.First.First.Next.Last;
+                //var latitude = activity.Entities[0].Properties.First.First.First.Next.Last;
 
-                if (activity.Text.ToString().ToUpper() == "SIMPIZZA") 
+                if (activity.Entities != null)
+                {
+                    string mensagemRetorno = "";
+
+                    var latitude = activity.Entities[0].Properties.First.First.First.Next.Last;
+                    var longitude = activity.Entities[0].Properties.First.First.First.Next.Next.First;
+
+                    var endereco = latitude + "-" + longitude;
+
+                    //ArmazenaPedidoTemporario(Int64.Parse(activity.From.Id), 0, activity.From.Name, "endereco", ref mensagemRetorno, endereco);
+
+                    if (mensagemRetorno != "")
+                    {
+                        var reply = await connector.Conversations.SendToConversationAsync(activity.CreateReply("Desculpe, não foi possível efetuar o seu pedido"));
+                    }
+                    else
+                    {
+                        var reply = await connector.Conversations.SendToConversationAsync(activity.CreateReply("Muito bom! Seu pedido foi efetuado. Fique atento porque podemos entrar em contato com você se necessário. Logo mais você receberá o seu pedido =D"));
+                    }
+                }
+                else if (activity.Text.ToString().ToUpper() == "8655481SIMPIZZA")
                 {
                     //Activity replyToConversation = activity.CreateReply("Ótimo, vamos te enviar nosso Cardápio!");
                     var reply = await connector.Conversations.SendToConversationAsync(BotaoCardapio(activity));
                 }
-                else if(activity.Text.ToString().ToUpper() == "NAOPIZZA")
+                else if (activity.Text.ToString().ToUpper() == "8655481NAOPIZZA")
                 {
                     Activity replyToConversation = activity.CreateReply("Tudo bem, quem sabe na próxima!");
                     var reply = await connector.Conversations.SendToConversationAsync(replyToConversation);
                 }
                 else if (activity.Text.ToString().ToUpper().StartsWith("8655481CARDAPIO"))
                 {
-                    Activity replyToConversation = activity.CreateReply("Excelente escolha!/n" + "Agora nos informe o seu endereço contendo: Cidade, bairro, rua, casa e CEP");
-                    var reply = await connector.Conversations.SendToConversationAsync(replyToConversation);
+                    string mensagemRetorno = "";
+                    //ArmazenaPedidoTemporario(Int64.Parse(activity.From.Id), Int32.Parse(activity.Text.ToString().Substring("8655481CARDAPIO".Length)), activity.From.Name, "cardapio", ref mensagemRetorno);
+
+                    if (mensagemRetorno != "")
+                    {
+                        var reply = await connector.Conversations.SendToConversationAsync(activity.CreateReply("Desculpe, não foi possível efetuar o seu pedido"));
+                    }
+                    else
+                    {
+                        var reply = await connector.Conversations.SendToConversationAsync(BotaoMetodoPagamento(activity));
+                    }
+                    //Activity replyToConversation = activity.CreateReply("Excelente escolha!/n" + "Agora nos informe o seu endereço contendo: Cidade, bairro, rua, casa e CEP");
+
                 }
+                else if (activity.Text.ToString().ToUpper().StartsWith("8655481MEIOPAGAMENTO"))
+                {
+                    string mensagemRetorno = "";
+                    //ArmazenaPedidoTemporario(Int64.Parse(activity.From.Id), Int32.Parse(activity.Text.ToString().Substring("8655481MEIOPAGAMENTO".Length)), activity.From.Name, "meioPagamento", ref mensagemRetorno);
+
+                    if (mensagemRetorno != "")
+                    {
+                        var reply = await connector.Conversations.SendToConversationAsync(activity.CreateReply("Desculpe, não foi possível efetuar o seu pedido"));
+                    }
+                    else
+                    {
+                        var reply = await connector.Conversations.SendToConversationAsync(activity.CreateReply("Favor envie sua localização pelo messenger"));
+                    }
+                }
+                //else if (activity.Text.ToString().Length == 8)
+                //{
+
+                //}
                 else
                 {
                     var reply = await connector.Conversations.SendToConversationAsync(BotaoInicial(activity));
@@ -57,7 +106,7 @@ namespace JuditeBot.Bot
             var response = Request.CreateResponse(HttpStatusCode.OK);
             return response;
         }
- 
+
         private Activity HandleSystemMessage(Activity message)
         {
             if (message.Type == ActivityTypes.DeleteUserData)
@@ -83,10 +132,10 @@ namespace JuditeBot.Bot
             else if (message.Type == ActivityTypes.Ping)
             {
             }
- 
+
             return null;
         }
- 
+
         private Activity BotaoInicial(Activity activity)
         {
             Activity replyToConversation = activity.CreateReply("Olá " + activity.From.Name);
@@ -99,20 +148,20 @@ namespace JuditeBot.Bot
             List<CardAction> cardButtons = new List<CardAction>();
             CardAction plButton = new CardAction()
             {
-                Value = "simPizza",
+                Value = "8655481simPizza",
                 Type = "postBack",
                 Title = "Sim"
             };
- 
+
             CardAction plButton2 = new CardAction()
             {
-                Value = "naoPizza",
+                Value = "8655481naoPizza",
                 Type = "postBack",
                 Title = "Não"
             };
             cardButtons.Add(plButton);
             cardButtons.Add(plButton2);
- 
+
             HeroCard plCard = new HeroCard()
             {
                 Title = "Fast Pizza",
@@ -122,19 +171,23 @@ namespace JuditeBot.Bot
             };
             Attachment plAttachment = plCard.ToAttachment();
             replyToConversation.Attachments.Add(plAttachment);
- 
+
             return replyToConversation;
         }
- 
+
         private Activity BotaoCardapio(Activity activity)//Falta Implementar
         {
- 
+
             List<Produto> produtos = new List<Produto>();
-            using (var repositorio = new PizzariaRepositorio())
-            {
-                var pizzaria = repositorio.Get(p => p.nome.ToUpper() == "FAST PIZZA").SingleOrDefault(); ;
-                produtos = pizzaria.cardapio.ToList<Produto>();
-            }
+            //using (var repositorio = new PizzariaRepositorio())
+            //{
+            //    var pizzaria = repositorio.Get(p => p.nome.ToUpper() == "FAST PIZZA").SingleOrDefault(); ;
+            //    produtos = pizzaria.cardapio.ToList<Produto>();
+            //}
+
+            produtos.Add(new Produto() { nome = "Mussarela", valor = 20.00, Id = 1 });
+            produtos.Add(new Produto() { nome = "Calabreza", valor = 18.00, Id = 2 });
+            produtos.Add(new Produto() { nome = "4 queijos", valor = 25.00, Id = 3 });
 
             Activity replyToConversation = activity.CreateReply();
             replyToConversation.Recipient = activity.From;
@@ -143,7 +196,7 @@ namespace JuditeBot.Bot
             List<CardAction> cardButtons = new List<CardAction>();
             List<CardImage> cardImages = new List<CardImage>();
             cardImages.Add(new CardImage(url: "http://www.pizzariafornella.com.br/wp-content/uploads/2015/07/CARDAPIO.png"));
- 
+
             foreach (var produto in produtos)
             {
                 CardAction plButton = new CardAction()
@@ -152,10 +205,10 @@ namespace JuditeBot.Bot
                     Type = "postBack",
                     Title = produto.nome
                 };
- 
+
                 cardButtons.Add(plButton);
             }
- 
+
             HeroCard plCard = new HeroCard()
             {
                 Title = "Cardápio",
@@ -163,12 +216,107 @@ namespace JuditeBot.Bot
                 Buttons = cardButtons,
                 Images = cardImages
             };
- 
+
             Attachment plAttachment = plCard.ToAttachment();
             replyToConversation.Attachments.Add(plAttachment);
- 
+
             return replyToConversation;
         }
- 
+
+        private Activity BotaoMetodoPagamento(Activity activity)//Falta Implementar
+        {
+
+            List<MeioPagamento> meiosPagamentos = new List<MeioPagamento>();
+            meiosPagamentos.Add(new MeioPagamento() { meioPagamento = "Debito", Id = 1 });
+            meiosPagamentos.Add(new MeioPagamento() { meioPagamento = "Crédito", Id = 2 });
+            meiosPagamentos.Add(new MeioPagamento() { meioPagamento = "Dinheiro", Id = 3 });
+
+            Activity replyToConversation = activity.CreateReply();
+            replyToConversation.Recipient = activity.From;
+            replyToConversation.Type = "message";
+            replyToConversation.Attachments = new List<Attachment>();
+            List<CardAction> cardButtons = new List<CardAction>();
+            List<CardImage> cardImages = new List<CardImage>();
+            cardImages.Add(new CardImage(url: "http://www.makemoneyinlife.com/wp-content/uploads/2015/12/Make-Money-On-Credit-Cards.jpg"));
+
+            foreach (var meioPagamento in meiosPagamentos)
+            {
+                CardAction plButton = new CardAction()
+                {
+                    Value = id + "meioPagamento" + meioPagamento.Id.ToString(),
+                    Type = "postBack",
+                    Title = meioPagamento.meioPagamento
+                };
+
+                cardButtons.Add(plButton);
+            }
+
+            HeroCard plCard = new HeroCard()
+            {
+                Title = "Meio de Pagamento",
+                Subtitle = "Escolha seu método de pagamento",
+                Buttons = cardButtons,
+                Images = cardImages
+            };
+
+            Attachment plAttachment = plCard.ToAttachment();
+            replyToConversation.Attachments.Add(plAttachment);
+
+            return replyToConversation;
+        }
+
+        private void ArmazenaPedidoTemporario(long idUsuario, int idDado, string nomeUsuario, string tipoDado, ref string mensagem, string endereco = null)
+        {
+            PedidoTemporario pedidoTemporario = new PedidoTemporario();
+
+            try
+            {
+                if (tipoDado == "cardapio")
+                {
+
+                    pedidoTemporario.idUsuarioMessenger = idUsuario;
+                    pedidoTemporario.idProduto = idDado;
+                    pedidoTemporario.nomeUsuarioMessenger = nomeUsuario;
+
+                    using (var repositorio = new PedidoTemporarioRepositorio())
+                    {
+                        repositorio.Adicionar(pedidoTemporario);
+                        repositorio.SalvarTodos();
+                    }
+                }
+                else if (tipoDado == "meioPagamento")
+                {
+
+                    using (var repositorio = new PedidoTemporarioRepositorio())
+                    {
+                        var pedido = repositorio.Get(p => p.idUsuarioMessenger == idUsuario).ToList<PedidoTemporario>().SingleOrDefault();
+                        pedido.idMeioPagamento = idDado;
+                        repositorio.Atualizar(pedido);
+                        repositorio.SalvarTodos();
+                    }
+                }
+                else if (tipoDado == "endereco")
+                {
+
+                    using (var repositorio = new PedidoTemporarioRepositorio())
+                    {
+                        var pedido = repositorio.Get(p => p.idUsuarioMessenger == idUsuario).ToList<PedidoTemporario>().SingleOrDefault();
+                        pedido.endereco = endereco;
+                        repositorio.Atualizar(pedido);
+                        repositorio.SalvarTodos();
+                    }
+                }
+
+                mensagem = "";
+            }
+            catch (Exception e)
+            {
+                mensagem = e.Message;
+            }
+
+
+
+        }
+
     }
 }

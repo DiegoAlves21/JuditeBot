@@ -21,6 +21,7 @@ namespace DAO.Context
         public DbSet<Pedido> pedidos { get; set; }
         public DbSet<Produto> produtos { get; set; }
         public DbSet<Pizzaria> pizzarias { get; set; }
+        public DbSet<PedidoTemporario> pedidoTemporario { get; set; }
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{

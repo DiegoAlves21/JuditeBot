@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="BBL\MeioPagamentoRepositorio.cs" />
     <Compile Include="BBL\PedidoRepositorio.cs" />
+    <Compile Include="BBL\PedidoTemporarioRepositorio.cs" />
     <Compile Include="BBL\PizzariaRepositorio.cs" />
     <Compile Include="BBL\ProdutoRepositorio.cs" />
     <Compile Include="BBL\StatusPedidoRepositorio.cs" />
