@@ -39,7 +39,7 @@ namespace JuditeBot.Bot
 
                     var endereco = latitude + "-" + longitude;
 
-                    //ArmazenaPedidoTemporario(Int64.Parse(activity.From.Id), 0, activity.From.Name, "endereco", ref mensagemRetorno, endereco);
+                    ArmazenaPedidoTemporario(Int64.Parse(activity.From.Id), 0, activity.From.Name, "endereco", ref mensagemRetorno, endereco);
 
                     if (mensagemRetorno != "")
                     {
@@ -63,7 +63,7 @@ namespace JuditeBot.Bot
                 else if (activity.Text.ToString().ToUpper().StartsWith("8655481CARDAPIO"))
                 {
                     string mensagemRetorno = "";
-                    //ArmazenaPedidoTemporario(Int64.Parse(activity.From.Id), Int32.Parse(activity.Text.ToString().Substring("8655481CARDAPIO".Length)), activity.From.Name, "cardapio", ref mensagemRetorno);
+                    ArmazenaPedidoTemporario(Int64.Parse(activity.From.Id), Int32.Parse(activity.Text.ToString().Substring("8655481CARDAPIO".Length)), activity.From.Name, "cardapio", ref mensagemRetorno);
 
                     if (mensagemRetorno != "")
                     {
@@ -79,7 +79,7 @@ namespace JuditeBot.Bot
                 else if (activity.Text.ToString().ToUpper().StartsWith("8655481MEIOPAGAMENTO"))
                 {
                     string mensagemRetorno = "";
-                    //ArmazenaPedidoTemporario(Int64.Parse(activity.From.Id), Int32.Parse(activity.Text.ToString().Substring("8655481MEIOPAGAMENTO".Length)), activity.From.Name, "meioPagamento", ref mensagemRetorno);
+                    ArmazenaPedidoTemporario(Int64.Parse(activity.From.Id), Int32.Parse(activity.Text.ToString().Substring("8655481MEIOPAGAMENTO".Length)), activity.From.Name, "meioPagamento", ref mensagemRetorno);
 
                     if (mensagemRetorno != "")
                     {
@@ -179,15 +179,15 @@ namespace JuditeBot.Bot
         {
 
             List<Produto> produtos = new List<Produto>();
-            //using (var repositorio = new PizzariaRepositorio())
-            //{
-            //    var pizzaria = repositorio.Get(p => p.nome.ToUpper() == "FAST PIZZA").SingleOrDefault(); ;
-            //    produtos = pizzaria.cardapio.ToList<Produto>();
-            //}
+            using (var repositorio = new PizzariaRepositorio())
+            {
+                var pizzaria = repositorio.Get(p => p.nome.ToUpper() == "FAST PIZZA").SingleOrDefault(); ;
+                produtos = pizzaria.cardapio.ToList<Produto>();
+            }
 
-            produtos.Add(new Produto() { nome = "Mussarela", valor = 20.00, Id = 1 });
-            produtos.Add(new Produto() { nome = "Calabreza", valor = 18.00, Id = 2 });
-            produtos.Add(new Produto() { nome = "4 queijos", valor = 25.00, Id = 3 });
+            //produtos.Add(new Produto() { nome = "Mussarela", valor = 20.00, Id = 1 });
+            //produtos.Add(new Produto() { nome = "Calabreza", valor = 18.00, Id = 2 });
+            //produtos.Add(new Produto() { nome = "4 queijos", valor = 25.00, Id = 3 });
 
             Activity replyToConversation = activity.CreateReply();
             replyToConversation.Recipient = activity.From;
@@ -227,9 +227,14 @@ namespace JuditeBot.Bot
         {
 
             List<MeioPagamento> meiosPagamentos = new List<MeioPagamento>();
-            meiosPagamentos.Add(new MeioPagamento() { meioPagamento = "Debito", Id = 1 });
-            meiosPagamentos.Add(new MeioPagamento() { meioPagamento = "Crédito", Id = 2 });
-            meiosPagamentos.Add(new MeioPagamento() { meioPagamento = "Dinheiro", Id = 3 });
+            using (var repositorio = new PizzariaRepositorio())
+            {
+                var pizzaria = repositorio.Get(p => p.nome.ToUpper() == "FAST PIZZA").SingleOrDefault(); ;
+                meiosPagamentos = pizzaria.meioPagamento.ToList<MeioPagamento>();
+            }
+            //meiosPagamentos.Add(new MeioPagamento() { meioPagamento = "Debito", Id = 1 });
+            //meiosPagamentos.Add(new MeioPagamento() { meioPagamento = "Crédito", Id = 2 });
+            //meiosPagamentos.Add(new MeioPagamento() { meioPagamento = "Dinheiro", Id = 3 });
 
             Activity replyToConversation = activity.CreateReply();
             replyToConversation.Recipient = activity.From;
@@ -297,13 +302,29 @@ namespace JuditeBot.Bot
                 }
                 else if (tipoDado == "endereco")
                 {
-
                     using (var repositorio = new PedidoTemporarioRepositorio())
                     {
                         var pedido = repositorio.Get(p => p.idUsuarioMessenger == idUsuario).ToList<PedidoTemporario>().SingleOrDefault();
                         pedido.endereco = endereco;
                         repositorio.Atualizar(pedido);
                         repositorio.SalvarTodos();
+
+                        pedidoTemporario = new PedidoTemporario();
+                        pedidoTemporario = repositorio.Get(p => p.idUsuarioMessenger == idUsuario).ToArray<PedidoTemporario>().SingleOrDefault();
+
+                    }
+
+                    using (var repositorio = new PedidoRepositorio())
+                    {
+                        var pedido = new Pedido();
+                        pedido.meioPagamentoId = pedidoTemporario.idMeioPagamento;
+                        pedido.produtos = new List<Produto>();
+                        pedido.produtos.Add(new Produto { Id = pedidoTemporario.idProduto });
+                        pedido.status = new StatusPedido() { statusPedido = "Pedido Efetuado" };
+                        pedido.endereco = pedidoTemporario.endereco;
+                        pedido.nomeCliente = pedidoTemporario.nomeUsuarioMessenger;
+
+                        repositorio.Adicionar(pedido);
                     }
                 }
 
