@@ -6,29 +6,105 @@ using System.Linq;
 using System.Net;
 using System.Web.Http.Results;
 using System.Web.Http;
+using Microsoft.Owin.Security;
+using System.Web;
+using System.Net.Http;
 
 namespace JuditeBot.Controllers
 {
-    [RoutePrefix("JuditeBot/Produto")]
+    [RoutePrefix("JuditeBot")]
     public class ProdutoController : ApiController
     {
-        [Route("Adicionar")]
+        // Retorna Nosso Authentication Manager
+        private IAuthenticationManager Authentication
+        {
+            get { return HttpContext.Current.GetOwinContext().Authentication; }
+        }
+
+        [Route("products")]
+        [Authorize]
         [HttpPost]
         public JsonResult<Retorno> Adicionar([FromBody]Produto produto)
         {
             Retorno resultado = new Retorno();
 
+            var pizzariaId = int.Parse(this.Authentication.User.Claims.SingleOrDefault().Value);
+
             try
             {
-                using (var repositorio = new ProdutoRepositorio())
+                using (var repositorio = new PizzariaRepositorio())
                 {
                     if (produto == null)
                     {
-                        resultado = new Retorno() { msgRetorno = "Parâmetro recebido parece não estar certo, valor: " + produto };
+                        resultado = new Retorno() { msgRetorno = "Parâmetro recebido parece não estar certo, valor: "};
                     }
-                    repositorio.Adicionar(produto);
-                    repositorio.SalvarTodos();
-                    resultado = new Retorno() { msgRetorno = "Operação Realizada com sucesso" };
+                    else
+                    {
+                        var pizzaria  = repositorio.Get(p => p.Id == pizzariaId).SingleOrDefault();
+
+                        if (pizzaria.produtos == null)
+                        {
+                            pizzaria.produtos = new List<Produto>();
+                        }
+
+                        pizzaria.produtos.Add(produto);
+
+                        repositorio.Atualizar(pizzaria);
+
+                        repositorio.SalvarTodos();
+
+                        resultado = new Retorno() { msgRetorno = "Operação Realizada com sucesso" };
+
+                        
+                    }
+                    
+
+                    return Json(resultado);
+                }
+            }
+            catch (Exception e)
+            {
+                resultado = new Retorno() { msgRetorno = e.Message };
+                return Json(resultado);
+            }
+
+        }
+
+        [Route("products")]
+        [Authorize]
+        [HttpGet]
+        public JsonResult<Retorno> Listar()
+        {
+            Retorno resultado = new Retorno();
+            HttpResponseMessage response = new HttpResponseMessage();
+            IList<dynamic> produtos = new List<dynamic>();
+            var pizzariaId = int.Parse(this.Authentication.User.Claims.SingleOrDefault().Value);
+            
+            try
+            {
+                using (var repositorio = new PizzariaRepositorio())
+                {
+                    var pizzaria = repositorio.Get(p => p.Id == pizzariaId).SingleOrDefault();
+
+                    if (pizzaria.produtos == null)
+                    {
+                        response.StatusCode = HttpStatusCode.NotFound;
+                        this.ResponseMessage(response);
+                        resultado = new Retorno() { msgRetorno = "Não há produtos cadastrados" };
+                    }
+                    else
+                    {
+                        foreach(Produto p in pizzaria.produtos)
+                        {
+                            produtos.Add(new { Id = p.Id, nome = p.nome, valor = p.valor});
+                        }
+                        //this.NotFound();
+                        //response.StatusCode = HttpStatusCode.NotModified;
+                        this.ResponseMessage(response);
+                        this.ActionContext.Response = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
+
+                        resultado = new Retorno() { msgRetorno = "Operação Realizada com sucesso", entidade = produtos };
+                    }
 
                     return Json(resultado);
                 }

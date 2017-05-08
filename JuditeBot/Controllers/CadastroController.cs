@@ -19,6 +19,7 @@ namespace JuditeBot.Controllers
         public JsonResult<Retorno> signup([FromBody]Pizzaria pizzaria)
         {
             Retorno resultado = new Retorno();
+            HttpResponseMessage response = new HttpResponseMessage();
 
             try
             {
@@ -26,23 +27,25 @@ namespace JuditeBot.Controllers
                 {
                     if (pizzaria != null)
                     {
-                        if (pizzaria.usuario != null)
+                        if (pizzaria.usuarios != null && !string.IsNullOrEmpty(pizzaria.nome))
                         {
                             repositorio.Adicionar(pizzaria);
                             repositorio.SalvarTodos();
 
-                            var p = repositorio.Get(u => (u.nome == pizzaria.nome)).ToList().SingleOrDefault();
+                            resultado = new Retorno() { msgRetorno = "Operação Realizada com sucesso" };
+                            
+                            response.StatusCode = HttpStatusCode.OK;
 
-                            resultado = new Retorno() { msgRetorno = "Operação Realizada com sucesso", entidade = p };
-
-                            this.Request.CreateResponse(HttpStatusCode.Created, "Criado novo usuário e pizzaria");
+                            this.ResponseMessage(response);// .CreateResponse(HttpStatusCode.Created, "Criado novo usuário e pizzaria");
 
                             return Json(resultado);
 
                         }
                         else
                         {
-                            this.Request.CreateResponse(HttpStatusCode.InternalServerError, "Erro ao tentar criar");
+                            //this.Request.CreateResponse(HttpStatusCode.InternalServerError, "Erro ao tentar criar");
+                            response.StatusCode = HttpStatusCode.Unauthorized;
+                            this.ResponseMessage(response);
                             resultado = new Retorno() { msgRetorno = "Parâmetro do usuario recebido parece não estar certo, valor: " + pizzaria };
                             return Json(resultado);
                         }
@@ -50,7 +53,9 @@ namespace JuditeBot.Controllers
                     }
                     else
                     {
-                        this.Request.CreateResponse(HttpStatusCode.InternalServerError, "Erro ao tentar criar");
+                        //this.Request.CreateResponse(HttpStatusCode.InternalServerError, "Erro ao tentar criar");
+                        response.StatusCode = HttpStatusCode.Unauthorized;
+                        this.ResponseMessage(response);
                         resultado = new Retorno() { msgRetorno = "Parâmetro recebido parece não estar certo, valor: " + pizzaria };
                         return Json(resultado);
                     }
@@ -59,83 +64,85 @@ namespace JuditeBot.Controllers
             }
             catch (Exception e)
             {
-                this.Request.CreateResponse(HttpStatusCode.InternalServerError, "Erro ao tentar criar");
+                //this.Request.CreateResponse(HttpStatusCode.InternalServerError, "Erro ao tentar criar");
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                this.ResponseMessage(response);
                 resultado = new Retorno() { msgRetorno = e.Message };
                 return Json(resultado);
             }
 
         }
 
-        [Route("signin")]
-        [HttpPost]
-        public JsonResult<Retorno> signin([FromBody]Usuario usuario)
-        {
-            Retorno resultado = new Retorno();
-            Usuario user = new Usuario();
-            Pizzaria pizzaria = new Pizzaria();
+        //[Route("signin")]
+        //[HttpPost]
+        //public JsonResult<Retorno> signin([FromBody]Usuario usuario)
+        //{
+        //    Retorno resultado = new Retorno();
+        //    Usuario user = new Usuario();
+        //    Pizzaria pizzaria = new Pizzaria();
 
-            try
-             {
-                using (var repositorio = new UsuarioRepositorio())
-                {
-                    if (usuario != null)
-                    {
-                        if (usuario.username != null && usuario.password != null)
-                        {
-                            user = repositorio.Get(u => (u.username == usuario.username && u.password == usuario.password)).ToList().SingleOrDefault();
-                            repositorio.Dispose();
-                        }
-                        else
-                        {
-                            this.Request.CreateResponse(HttpStatusCode.Unauthorized, "Login falhou, não autorizado");
-                            resultado = new Retorno() { msgRetorno = "Parâmetro do usuario recebido parece não estar certo, valor: " + usuario };
-                            return Json(resultado);
-                        }
+        //    try
+        //     {
+        //        using (var repositorio = new UsuarioRepositorio())
+        //        {
+        //            if (usuario != null)
+        //            {
+        //                if (usuario.username != null && usuario.password != null)
+        //                {
+        //                    user = repositorio.Get(u => (u.username == usuario.username && u.password == usuario.password)).ToList().SingleOrDefault();
+        //                    repositorio.Dispose();
+        //                }
+        //                else
+        //                {
+        //                    this.Request.CreateResponse(HttpStatusCode.Unauthorized, "Login falhou, não autorizado");
+        //                    resultado = new Retorno() { msgRetorno = "Parâmetro do usuario recebido parece não estar certo, valor: " + usuario };
+        //                    return Json(resultado);
+        //                }
 
-                    }
-                    else
-                    {
-                        this.Request.CreateResponse(HttpStatusCode.Unauthorized, "Login falhou, não autorizado");
-                        resultado = new Retorno() { msgRetorno = "Parâmetro recebido parece não estar certo, valor: " + usuario };
-                        return Json(resultado);
-                    }
+        //            }
+        //            else
+        //            {
+        //                this.Request.CreateResponse(HttpStatusCode.Unauthorized, "Login falhou, não autorizado");
+        //                resultado = new Retorno() { msgRetorno = "Parâmetro recebido parece não estar certo, valor: " + usuario };
+        //                return Json(resultado);
+        //            }
 
-                }
+        //        }
 
-                if (user != null)
-                {
-                    pizzaria = buscaPizzaria(user.Id);
+        //        if (user != null)
+        //        {
+        //            pizzaria = buscaPizzaria(user.pizzariaId);
 
-                    if(pizzaria == null)
-                    {
-                        this.Request.CreateResponse(HttpStatusCode.Unauthorized, "Login falhou, não autorizado");
-                        resultado = new Retorno() { msgRetorno = "Erro ao buscar a pizzaria" };
-                        return Json(resultado);
-                    }
-                    else
-                    {
-                        resultado = new Retorno() { msgRetorno = "Operação Realizada com sucesso", entidade = pizzaria };
-                        this.Request.CreateResponse(HttpStatusCode.OK, "Login com sucesso");
+        //            if(pizzaria == null)
+        //            {
+        //                this.Request.CreateResponse(HttpStatusCode.Unauthorized, "Login falhou, não autorizado");
+        //                resultado = new Retorno() { msgRetorno = "Erro ao buscar a pizzaria" };
+        //                return Json(resultado);
+        //            }
+        //            else
+        //            {
+        //                resultado = new Retorno() { msgRetorno = "Operação Realizada com sucesso", entidade = pizzaria };
+        //                this.Request.CreateResponse(HttpStatusCode.OK, "Login com sucesso");
 
-                        return Json(resultado);
-                    }
+        //                return Json(resultado);
+        //            }
                     
-                }
-                else
-                {
-                    this.Request.CreateResponse(HttpStatusCode.Unauthorized, "Login falhou, não autorizado");
-                    resultado = new Retorno() { msgRetorno = "Parâmetro do usuario recebido parece não estar certo, valor: " + usuario };
-                    return Json(resultado);
-                }
-            }
-            catch (Exception e)
-            {
-                this.Request.CreateResponse(HttpStatusCode.Unauthorized, "Login falhou, não autorizado");
-                resultado = new Retorno() { msgRetorno = e.Message };
-                return Json(resultado);
-            }
+        //        }
+        //        else
+        //        {
+        //            this.Request.CreateResponse(HttpStatusCode.Unauthorized, "Login falhou, não autorizado");
+        //            resultado = new Retorno() { msgRetorno = "Parâmetro do usuario recebido parece não estar certo, valor: " + usuario };
+        //            return Json(resultado);
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        this.Request.CreateResponse(HttpStatusCode.Unauthorized, "Login falhou, não autorizado");
+        //        resultado = new Retorno() { msgRetorno = e.Message };
+        //        return Json(resultado);
+        //    }
 
-        }
+        //}
 
         private Pizzaria buscaPizzaria(int id)
         {
@@ -144,7 +151,7 @@ namespace JuditeBot.Controllers
             {
                 using (var repositorio = new PizzariaRepositorio())
                 {
-                    var pizzariaGet = (Pizzaria)repositorio.Get(p => p.usuario.Id == id).ToList().SingleOrDefault();
+                    var pizzariaGet = (Pizzaria)repositorio.Get(p => p.Id == id).ToList().SingleOrDefault();
                     pizzaria = MapperManual.MontaModel(pizzariaGet);
                     repositorio.Dispose();
                     return pizzaria;

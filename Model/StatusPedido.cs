@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public class StatusPedido : IEntity
+    public class StatusPedido 
     {
         public int Id { get; set; }
         public string statusPedido { get; set; }

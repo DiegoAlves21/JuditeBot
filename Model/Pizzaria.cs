@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public class Pizzaria : IEntity
+    public class Pizzaria 
     {
         public int Id { get; set; }
         public string nome { get; set; }
@@ -15,11 +15,11 @@ namespace Model
 
         public virtual IList<MeioPagamento> meioPagamento { get; set; }
 
-        public virtual IList<Produto> cardapio { get; set; }
+        public virtual IList<Produto> produtos { get; set; }
 
         public virtual IList<Pedido> pedidos { get; set; }
 
-        public int usuarioId { get; set; }
-        public virtual Usuario usuario { get; set; }
+        public virtual IList<Usuario> usuarios { get; set; }
+
     }
 }

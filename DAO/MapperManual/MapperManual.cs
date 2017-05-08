@@ -16,9 +16,9 @@ namespace DAO.MapperManual
             pizzaria.Id = p.Id;
             pizzaria.taxaEntrega = p.taxaEntrega;
 
-            if (p.cardapio != null)
+            if (p.produtos != null)
             {
-                pizzaria.cardapio = p.cardapio;
+                pizzaria.produtos = p.produtos;
             }
 
             if (p.meioPagamento != null)

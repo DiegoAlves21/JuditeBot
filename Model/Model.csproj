@@ -45,6 +45,7 @@
     <Compile Include="Pedido.cs" />
     <Compile Include="PedidoTemporario.cs" />
     <Compile Include="Pizzaria.cs" />
+    <Compile Include="PizzaTamanho.cs" />
     <Compile Include="Produto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Retorno.cs" />

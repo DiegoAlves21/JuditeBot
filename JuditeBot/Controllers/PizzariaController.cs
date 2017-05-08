@@ -29,12 +29,12 @@ namespace JuditeBot.Controllers
                        
                         pizzaria = repositorio.Find(id);
 
-                        if(pizzaria.cardapio == null)
+                        if(pizzaria.produtos == null)
                         {
-                            pizzaria.cardapio = new List<Produto>();
+                            pizzaria.produtos = new List<Produto>();
                         }
 
-                        resultado = new Retorno() { msgRetorno = "Operação Realizada com sucesso", entidade = pizzaria.cardapio };
+                        resultado = new Retorno() { msgRetorno = "Operação Realizada com sucesso", entidade = pizzaria.produtos };
 
                         this.Request.CreateResponse(HttpStatusCode.OK, "Todos os produtos vinculados a pizzaria");
 
@@ -77,10 +77,10 @@ namespace JuditeBot.Controllers
                         pizzaria = repositorio.Find(id);
                         if (pizzaria != null && produtos != null)
                         {
-                            pizzaria.cardapio = produtos;
+                            pizzaria.produtos = produtos;
                             repositorio.Atualizar(pizzaria);
                             repositorio.SalvarTodos();
-                            resultado = new Retorno() { msgRetorno = "Operação Realizada com sucesso", entidade = pizzaria.cardapio };
+                            resultado = new Retorno() { msgRetorno = "Operação Realizada com sucesso", entidade = pizzaria.produtos };
 
                             this.Request.CreateResponse(HttpStatusCode.OK, "Produtos criados com sucesso");
 

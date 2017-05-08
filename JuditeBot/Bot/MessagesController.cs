@@ -182,7 +182,7 @@ namespace JuditeBot.Bot
             using (var repositorio = new PizzariaRepositorio())
             {
                 var pizzaria = repositorio.Get(p => p.nome.ToUpper() == "FAST PIZZA").SingleOrDefault(); ;
-                produtos = pizzaria.cardapio.ToList<Produto>();
+                produtos = pizzaria.produtos.ToList<Produto>();
             }
 
             //produtos.Add(new Produto() { nome = "Mussarela", valor = 20.00, Id = 1 });
