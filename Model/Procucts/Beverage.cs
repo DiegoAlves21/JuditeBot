@@ -1,4 +1,4 @@
-﻿using Model.Interface;
+﻿using Model.Procucts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public class MeioPagamento
+    public class Beverage : Product
     {
-        public int Id { get; set; }
-        public string meioPagamento { get; set; }
+        public List<ProductInstanceEntity> productInstance { get; set; }
     }
 }

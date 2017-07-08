@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DAO.BBL
 {
-    public class StatusPedidoRepositorio : Repositorio<StatusPedido>
+    public class StatusPedidoRepositorio : Repositorio<OrderStatus>
     {
 
     }

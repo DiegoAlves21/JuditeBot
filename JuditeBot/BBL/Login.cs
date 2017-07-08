@@ -13,7 +13,7 @@ namespace JuditeBot.BBL
         public dynamic Valida(string username, string password)
         {
 
-            Usuario usuario;
+            Users usuario;
             try
             {
                 using (var repositorio = new UsuarioRepositorio())
@@ -31,8 +31,8 @@ namespace JuditeBot.BBL
                 {
                     if (usuario != null)
                     {
-                        var p = repositorio.Get(pi => pi.usuarios.Where(u => u.Id == usuario.Id).SingleOrDefault().Id == usuario.Id).ToList().SingleOrDefault();
-                        return new { isValid = true, mensagem = "Operação realizada com sucesso", pizzariaId = p.Id.ToString() };
+                        var p = repositorio.Get(pi => pi.users.Where(u => u.Id == usuario.Id).SingleOrDefault().Id == usuario.Id).ToList().SingleOrDefault();
+                        return new { isValid = true, mensagem = "Operação realizada com sucesso", pizzariaId = p.PizzariaId.ToString() };
                     }
                     else
                     {

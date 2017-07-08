@@ -12,23 +12,23 @@ namespace DAO.MapperManual
         public static Pizzaria MontaModel(Pizzaria p)
         {
             Pizzaria pizzaria = new Pizzaria();
-            pizzaria.nome = p.nome;
-            pizzaria.Id = p.Id;
-            pizzaria.taxaEntrega = p.taxaEntrega;
+            pizzaria.name = p.name;
+            pizzaria.PizzariaId = p.PizzariaId;
+            pizzaria.deliveryTax = p.deliveryTax;
 
-            if (p.produtos != null)
+            if (p.menus != null)
             {
-                pizzaria.produtos = p.produtos;
+                pizzaria.menus = p.menus;
             }
 
-            if (p.meioPagamento != null)
+            if (p.paymentMethods != null)
             {
-                pizzaria.meioPagamento = p.meioPagamento;
+                pizzaria.paymentMethods = p.paymentMethods;
             }
 
-            if (p.pedidos != null)
+            if (p.orders != null)
             {
-                pizzaria.pedidos = p.pedidos;
+                pizzaria.orders = p.orders;
             }
 
             return pizzaria;

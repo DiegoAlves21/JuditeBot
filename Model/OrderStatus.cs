@@ -1,5 +1,4 @@
-﻿using Model.Interface;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public class StatusPedido 
+    public class OrderStatus 
     {
         public int Id { get; set; }
-        public string statusPedido { get; set; }
+        public string description { get; set; }
     }
 }

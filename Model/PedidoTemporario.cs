@@ -1,5 +1,4 @@
-﻿using Model.Interface;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public class PedidoTemporario : IEntity
+    public class PedidoTemporario
     {
         public int Id { get; set; }
         public long idUsuarioMessenger { get; set; }

@@ -40,18 +40,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interface\IEntity.cs" />
-    <Compile Include="MeioPagamento.cs" />
-    <Compile Include="Pedido.cs" />
+    <Compile Include="Procucts\Beverage.cs" />
+    <Compile Include="Interfaces\ICommodity.cs" />
+    <Compile Include="PaymentMethod.cs" />
+    <Compile Include="Order.cs" />
     <Compile Include="PedidoTemporario.cs" />
     <Compile Include="Pizzaria.cs" />
-    <Compile Include="PizzaTamanho.cs" />
-    <Compile Include="Produto.cs" />
+    <Compile Include="Abstracts\Product.cs" />
+    <Compile Include="Procucts\MixedPizza.cs" />
+    <Compile Include="Procucts\Pizza.cs" />
+    <Compile Include="Procucts\PizzaSize.cs" />
+    <Compile Include="Generics\ProductInstance.cs" />
+    <Compile Include="Procucts\ProductSize.cs" />
+    <Compile Include="ProductInstanceEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Retorno.cs" />
-    <Compile Include="StatusPedido.cs" />
-    <Compile Include="Usuario.cs" />
+    <Compile Include="OrderStatus.cs" />
+    <Compile Include="Users.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

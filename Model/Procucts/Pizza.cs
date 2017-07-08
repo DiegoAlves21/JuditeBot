@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model.Interface
+namespace Model.Procucts
 {
-    public interface IEntity
+    public class Pizza : Product
     {
-        int Id { get; set; }
+        public List<ProductInstanceEntity> productInstance { get; set; }
     }
 }

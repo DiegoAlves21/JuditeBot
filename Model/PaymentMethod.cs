@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public class PizzaTamanho
+    public class PaymentMethod
     {
         public int Id { get; set; }
-        public string tamanho { get; set; }
-        public double fator { get; set; }
-
-        public virtual List<Produto> produtos { get; set; }
+        public string description { get; set; }
     }
 }

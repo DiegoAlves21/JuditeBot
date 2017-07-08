@@ -24,9 +24,9 @@ namespace JuditeBot.Controllers
         [Route("products")]
         [Authorize]
         [HttpPost]
-        public JsonResult<Retorno> Adicionar([FromBody]Produto produto)
+        public JsonResult<dynamic> Adicionar([FromBody]Product produto)
         {
-            Retorno resultado = new Retorno();
+            dynamic resultado;
 
             var pizzariaId = int.Parse(this.Authentication.User.Claims.SingleOrDefault().Value);
 
@@ -36,24 +36,24 @@ namespace JuditeBot.Controllers
                 {
                     if (produto == null)
                     {
-                        resultado = new Retorno() { msgRetorno = "Parâmetro recebido parece não estar certo, valor: "};
+                        resultado = new { msgRetorno = "Parâmetro recebido parece não estar certo, valor: "};
                     }
                     else
                     {
-                        var pizzaria  = repositorio.Get(p => p.Id == pizzariaId).SingleOrDefault();
+                        var pizzaria = repositorio.Get(p => p.PizzariaId == pizzariaId).SingleOrDefault();
 
-                        if (pizzaria.produtos == null)
+                        if (pizzaria.menus == null)
                         {
-                            pizzaria.produtos = new List<Produto>();
+                            pizzaria.menus = new List<Product>();
                         }
 
-                        pizzaria.produtos.Add(produto);
+                        pizzaria.menus.Add(produto);
 
                         repositorio.Atualizar(pizzaria);
 
                         repositorio.SalvarTodos();
 
-                        resultado = new Retorno() { msgRetorno = "Operação Realizada com sucesso" };
+                        resultado = new { msgRetorno = "Operação Realizada com sucesso" };
 
                         
                     }
@@ -64,7 +64,7 @@ namespace JuditeBot.Controllers
             }
             catch (Exception e)
             {
-                resultado = new Retorno() { msgRetorno = e.Message };
+                resultado = new { msgRetorno = e.Message };
                 return Json(resultado);
             }
 
@@ -73,9 +73,9 @@ namespace JuditeBot.Controllers
         [Route("products")]
         [Authorize]
         [HttpGet]
-        public JsonResult<Retorno> Listar()
+        public JsonResult<dynamic> Listar()
         {
-            Retorno resultado = new Retorno();
+            dynamic resultado;
             HttpResponseMessage response = new HttpResponseMessage();
             IList<dynamic> produtos = new List<dynamic>();
             var pizzariaId = int.Parse(this.Authentication.User.Claims.SingleOrDefault().Value);
@@ -84,26 +84,26 @@ namespace JuditeBot.Controllers
             {
                 using (var repositorio = new PizzariaRepositorio())
                 {
-                    var pizzaria = repositorio.Get(p => p.Id == pizzariaId).SingleOrDefault();
+                    var pizzaria = repositorio.Get(p => p.PizzariaId == pizzariaId).SingleOrDefault();
 
-                    if (pizzaria.produtos == null)
+                    if (pizzaria.menus == null)
                     {
                         response.StatusCode = HttpStatusCode.NotFound;
                         this.ResponseMessage(response);
-                        resultado = new Retorno() { msgRetorno = "Não há produtos cadastrados" };
+                        resultado = new { msgRetorno = "Não há produtos cadastrados" };
                     }
                     else
                     {
-                        foreach(Produto p in pizzaria.produtos)
+                        foreach (Product p in pizzaria.menus)
                         {
-                            produtos.Add(new { Id = p.Id, nome = p.nome, valor = p.valor});
+                            produtos.Add(new { Id = 1, nome = p.name, valor = p.avaible});
                         }
                         //this.NotFound();
                         //response.StatusCode = HttpStatusCode.NotModified;
                         this.ResponseMessage(response);
                         this.ActionContext.Response = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
 
-                        resultado = new Retorno() { msgRetorno = "Operação Realizada com sucesso", entidade = produtos };
+                        resultado = new { msgRetorno = "Operação Realizada com sucesso", entidade = produtos };
                     }
 
                     return Json(resultado);
@@ -111,7 +111,7 @@ namespace JuditeBot.Controllers
             }
             catch (Exception e)
             {
-                resultado = new Retorno() { msgRetorno = e.Message };
+                resultado = new { msgRetorno = e.Message };
                 return Json(resultado);
             }
 

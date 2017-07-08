@@ -178,11 +178,11 @@ namespace JuditeBot.Bot
         private Activity BotaoCardapio(Activity activity)//Falta Implementar
         {
 
-            List<Produto> produtos = new List<Produto>();
+            List<Product> produtos = new List<Product>();
             using (var repositorio = new PizzariaRepositorio())
             {
-                var pizzaria = repositorio.Get(p => p.nome.ToUpper() == "FAST PIZZA").SingleOrDefault(); ;
-                produtos = pizzaria.produtos.ToList<Produto>();
+                var pizzaria = repositorio.Get(p => p.name.ToUpper() == "FAST PIZZA").SingleOrDefault(); ;
+                produtos = pizzaria.menus.ToList<Product>();
             }
 
             //produtos.Add(new Produto() { nome = "Mussarela", valor = 20.00, Id = 1 });
@@ -201,9 +201,9 @@ namespace JuditeBot.Bot
             {
                 CardAction plButton = new CardAction()
                 {
-                    Value = id + "cardapio" + produto.Id.ToString(),
+                    Value = /*id + "cardapio" + produto.Id.ToString()*/ "123",
                     Type = "postBack",
-                    Title = produto.nome
+                    Title = produto.name
                 };
 
                 cardButtons.Add(plButton);
@@ -226,11 +226,11 @@ namespace JuditeBot.Bot
         private Activity BotaoMetodoPagamento(Activity activity)//Falta Implementar
         {
 
-            List<MeioPagamento> meiosPagamentos = new List<MeioPagamento>();
+            List<PaymentMethod> meiosPagamentos = new List<PaymentMethod>();
             using (var repositorio = new PizzariaRepositorio())
             {
-                var pizzaria = repositorio.Get(p => p.nome.ToUpper() == "FAST PIZZA").SingleOrDefault(); ;
-                meiosPagamentos = pizzaria.meioPagamento.ToList<MeioPagamento>();
+                var pizzaria = repositorio.Get(p => p.name.ToUpper() == "FAST PIZZA").SingleOrDefault(); ;
+                meiosPagamentos = pizzaria.paymentMethods.ToList<PaymentMethod>();
             }
             //meiosPagamentos.Add(new MeioPagamento() { meioPagamento = "Debito", Id = 1 });
             //meiosPagamentos.Add(new MeioPagamento() { meioPagamento = "Crédito", Id = 2 });
@@ -250,7 +250,7 @@ namespace JuditeBot.Bot
                 {
                     Value = id + "meioPagamento" + meioPagamento.Id.ToString(),
                     Type = "postBack",
-                    Title = meioPagamento.meioPagamento
+                    Title = meioPagamento.description
                 };
 
                 cardButtons.Add(plButton);
@@ -314,18 +314,18 @@ namespace JuditeBot.Bot
 
                     }
 
-                    using (var repositorio = new PedidoRepositorio())
-                    {
-                        var pedido = new Pedido();
-                        pedido.meioPagamentoId = pedidoTemporario.idMeioPagamento;
-                        pedido.produtos = new List<Produto>();
-                        pedido.produtos.Add(new Produto { Id = pedidoTemporario.idProduto });
-                        pedido.status = new StatusPedido() { statusPedido = "Pedido Efetuado" };
-                        pedido.endereco = pedidoTemporario.endereco;
-                        pedido.nomeCliente = pedidoTemporario.nomeUsuarioMessenger;
+                    //using (var repositorio = new PedidoRepositorio())
+                    //{
+                    //    var pedido = new Order();
+                    //    pedido.meioPagamentoId = pedidoTemporario.idMeioPagamento;
+                    //    pedido.produtos = new List<Product>();
+                    //    pedido.produtos.Add(new Produto { Id = pedidoTemporario.idProduto });
+                    //    pedido.status = new OrderStatus() { description = "Pedido Efetuado" };
+                    //    pedido.Address = pedidoTemporario.endereco;
+                    //    pedido.clientName = pedidoTemporario.nomeUsuarioMessenger;
 
-                        repositorio.Adicionar(pedido);
-                    }
+                    //    repositorio.Adicionar(pedido);
+                    //}
                 }
 
                 mensagem = "";

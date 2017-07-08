@@ -65,6 +65,7 @@
     <Compile Include="MapperManual\MapperManual.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositorio\Repositorio.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensoes\" />
