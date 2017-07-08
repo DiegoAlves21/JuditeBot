@@ -25,7 +25,7 @@ namespace JuditeBot.Controllers
         {
             try
             {
-                Pizzaria pizzaria = new Pizzaria();
+                /*Pizzaria pizzaria = new Pizzaria();
                 PizzariaRepositorio repositorio = new PizzariaRepositorio();
 
                 //Incluindo usuários
@@ -66,7 +66,11 @@ namespace JuditeBot.Controllers
                 pizzaria.name = "Pizzaria teste";
                 pizzaria.deliveryTax = 10.00;
 
-                repositorio.AdicionarBBL(pizzaria);
+                repositorio.AdicionarBBL(pizzaria);*/
+
+                PedidoRepositorio pedidoRepositorio = new PedidoRepositorio();
+
+
                 dynamic retorno = new { sucesso = true, msg = "" };
                 return Json(retorno);
 
