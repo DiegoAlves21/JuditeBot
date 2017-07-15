@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public class PaymentMethod
+    public enum PaymentMethod
     {
-        public int Id { get; set; }
-        public string description { get; set; }
+        DEBIT = 1,
+        CREDIT = 2,
+        SODEXO = 3,
+        TR = 4
     }
 }

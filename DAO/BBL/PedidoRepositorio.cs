@@ -10,6 +10,23 @@ namespace DAO.BBL
 {
     public class PedidoRepositorio : Repositorio<Order>
     {
+        public dynamic AdicionarBBL(Order order)
+        {
+            try
+            {
+                using (var repositorio = this)
+                {
+                    repositorio.Adicionar(order);
+                    repositorio.SalvarTodos();
+                    repositorio.Dispose();
+                    return new { temErro = false, msgRetorno = "Operação Realizada com sucesso" };
+                }
+            }
+            catch (Exception e)
+            {
+                return new { temErro = true, msgRetorno = e.Message };
+            }
 
+        }
     }
 }

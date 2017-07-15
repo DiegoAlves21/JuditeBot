@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Model.Procucts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,17 +13,19 @@ namespace Model
         public string name { get; set; }
         public double deliveryTax { get; set; }
 
-        public int paymentMethodsId { get; set; }
-        public virtual IList<PaymentMethod> paymentMethods { get; set; }
+        public virtual IList<CPaymentMethod> paymentMethods { get; set; }
 
-        public int menusId { get; set; }
+        //public int menusId { get; set; }
         public virtual IList<Product> menus { get; set; }
 
-        public int ordersId { get; set; }
+        //public int ordersId { get; set; }
         public virtual IList<Order> orders { get; set; }
 
-        public int usersId { get; set; }
+        //public int usersId { get; set; }
         public virtual IList<Users> users { get; set; }
+
+        //public int productSizeId { get; set; }
+        public virtual IList<ProductSize> productSizes { get; set; }
 
     }
 }

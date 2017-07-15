@@ -16,13 +16,17 @@ namespace Model
         public string Address { get; set; }
         public DateTime created { get; set; }
 
-        public int statusId { get; set; }
-        public virtual OrderStatus status { get; set; }
+        public OrderStatus ordersStatus { get; set; }
 
-        public int meioPagamentoId { get; set; }
-        public virtual PaymentMethod meioPagamento { get; set; }
+        public int paymentMethodId { get; set; }
+        public CPaymentMethod paymentMethod { get; set; }
 
-        public int itensId { get; set; }
-        public virtual List<ICommodity> itens { get; set; }
+        public virtual IList<ProductInstance> productInstances { get; set; }
+
+        public int pizzariaId { get; set; }
+        public virtual Pizzaria pizzaria { get; set; }
+
+        //public int mixedPizzaId { get; set; }
+        public virtual IList<MixedPizza> mixedPizzas { get; set; }
     }
 }

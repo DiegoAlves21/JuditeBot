@@ -10,23 +10,25 @@ namespace DAO.BBL
 {
     public class PizzariaRepositorio : Repositorio<Pizzaria>
     {
-        public dynamic AdicionarBBL(Pizzaria pizzaria)
+        public void AdicionarBBL(Pizzaria pizzaria)
         {
-            try
+            using (var repositorio = this)
             {
-                using (var repositorio = this)
-                {
-                    repositorio.Adicionar(pizzaria);
-                    repositorio.SalvarTodos();
-                    repositorio.Dispose();
-                    return new { temErro = false, msgRetorno = "Operação Realizada com sucesso" };
-                }
-            }
-            catch(Exception e)
-            {
-                return new { temErro = true, msgRetorno = e.Message };
+                repositorio.Adicionar(pizzaria);
+                repositorio.SalvarTodos();
+                repositorio.Dispose();
             }
                 
+        }
+
+        public IQueryable<Pizzaria> GetBBL(Func<Pizzaria, bool> predicate)
+        {
+            using (var repositorio = this)
+            {
+                var pizzaria = repositorio.Get(predicate);
+                return pizzaria;
+            }
+
         }
     }
 }

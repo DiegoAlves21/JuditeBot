@@ -10,8 +10,12 @@ namespace Model.Procucts
     public class MixedPizza : ICommodity
     {
         public int Id { get; set; }
-        public List<Pizza> flavors { get; set; }
-        public PizzaSize size { get; set; }
+
+        public int orderId { get; set; }
+        public virtual Order order { get; set; }
+
+        //public int productInstanceId { get; set; }
+        public virtual List<ProductInstance> productInstances { get; set; }
 
         public double getPrice()
         {
