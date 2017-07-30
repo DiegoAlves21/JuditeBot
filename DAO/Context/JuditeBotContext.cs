@@ -18,20 +18,15 @@ namespace DAO.Context
 
         }
         public DbSet<Users> usuarios { get; set; }
-        public DbSet<OrderStatus> statusPedidos { get; set; }
-        public DbSet<PaymentMethod> meiosPagamentos { get; set; }
         public DbSet<Order> pedidos { get; set; }
         public DbSet<Product> produtos { get; set; }
         public DbSet<Pizzaria> pizzarias { get; set; }
-        public DbSet<ProductInstanceEntity> productInstanceEntity { get; set; }
-        //public DbSet<ProductInstance<Beverage>> beverages { get; set; }
-        //public DbSet<ProductInstance<Pizza>> pizzas { get; set; }
-        public DbSet<Beverage> beverages { get; set; }
-        public DbSet<Pizza> pizzas { get; set; }
+        public DbSet<ProductInstance> productInstance { get; set; }
         public DbSet<MixedPizza> mixedPizzas { get; set; }
-        public DbSet<PizzaSize> pizzaSizes { get; set; }
         public DbSet<ProductSize> productSizes { get; set; }
         public DbSet<PedidoTemporario> pedidoTemporario { get; set; }
+        public DbSet<CPaymentMethod> paymentMethod { get; set; }
+
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
@@ -43,20 +38,17 @@ namespace DAO.Context
         //    base.OnConfiguring(optionsBuilder);
         //}
 
-        //protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            // modelBuilder.Entity<Order>()
+            // .HasMany(t => t.productInstances)
+            // .WithMany(t => t.orders);
 
-        //    // Example of controlling TPH iheritance:
-        //    //modelBuilder.Entity<Product>()
-        //    //        .Map<Beverage>(m => m.Requires("MyType").HasValue("B"))
-        //    //        .Map<Pizza>(m => m.Requires("MyType").HasValue("P"));
+            // modelBuilder.Entity<ProductInstance>()
+            //.HasMany(t => t.orders)
+            //.WithMany(t => t.productInstances);
 
-        //    // Example of controlling Foreign key:
-        //    modelBuilder.Entity<Pizzaria>()
-        //                .HasMany(p => p.menus)
-        //                .WithRequired()
-        //                .Map(m => m.MapKey("PizzariaId"));
-        //}
+            modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
+        }
     }
 }

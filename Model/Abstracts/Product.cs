@@ -1,4 +1,5 @@
-﻿using Model.Interfaces;
+﻿using Model.Enum;
+using Model.Interfaces;
 using Model.Procucts;
 using System;
 using System.Collections.Generic;
@@ -8,19 +9,19 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public abstract class Product
+    public class Product
     {
         public int Id { get; set; }
         public string name { get; set; }
         public bool avaible { get; set; }
 
-        //public List<ProductInstance<>> productInstance { get; set; }
+        public ProductType productType { get; set; }
 
-        //public double valor { get; set; }
+        //public int productInstanceId { get; set; }
+        public IList<ProductInstance> productInstance { get; set; }
 
-        //public virtual List<Pedido> pedidos { get; set; }
-
-        //public virtual List<Pizzaria> pizzarias { get; set; }
+        public int pizzariaId { get; set; }
+        public Pizzaria pizzaria { get; set; }
 
     }
 }

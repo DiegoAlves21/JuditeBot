@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DAO.BBL
 {
-    public class MeioPagamentoRepositorio : Repositorio<PaymentMethod>
+    public class CPaymentMethodRepositorio : Repositorio<CPaymentMethod>
     {
 
     }

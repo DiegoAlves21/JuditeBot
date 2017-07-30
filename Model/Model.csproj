@@ -40,21 +40,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Procucts\Beverage.cs" />
+    <Compile Include="CPaymentMethod.cs" />
+    <Compile Include="Enum\ProductType.cs" />
     <Compile Include="Interfaces\ICommodity.cs" />
-    <Compile Include="PaymentMethod.cs" />
+    <Compile Include="Enum\PaymentMethod.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="PedidoTemporario.cs" />
     <Compile Include="Pizzaria.cs" />
     <Compile Include="Abstracts\Product.cs" />
     <Compile Include="Procucts\MixedPizza.cs" />
-    <Compile Include="Procucts\Pizza.cs" />
-    <Compile Include="Procucts\PizzaSize.cs" />
     <Compile Include="Generics\ProductInstance.cs" />
     <Compile Include="Procucts\ProductSize.cs" />
-    <Compile Include="ProductInstanceEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="OrderStatus.cs" />
+    <Compile Include="Enum\OrderStatus.cs" />
     <Compile Include="Users.cs" />
   </ItemGroup>
   <ItemGroup />

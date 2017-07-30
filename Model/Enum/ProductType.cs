@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model.Procucts
+namespace Model.Enum
 {
-    public class PizzaSize : ProductSize
+    public enum ProductType
     {
-
+        PIZZA = 1,
+        BEVERAGE = 2
     }
 }

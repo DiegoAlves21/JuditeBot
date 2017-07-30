@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model.Procucts
+namespace Model
 {
-    public class Pizza : Product
+    public enum OrderStatus 
     {
-        public List<ProductInstanceEntity> productInstance { get; set; }
+        WAITING = 1,
+        OUT_FOR_DELIVERY = 2,
+        DONE = 3,
+        CANCELED = 4
     }
 }

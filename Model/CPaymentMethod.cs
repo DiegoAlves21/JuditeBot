@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public class OrderStatus 
+    public class CPaymentMethod
     {
         public int Id { get; set; }
-        public string description { get; set; }
+        public PaymentMethod paymentMethod { get; set; }
     }
 }

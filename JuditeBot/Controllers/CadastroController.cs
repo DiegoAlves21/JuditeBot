@@ -3,6 +3,7 @@ using DAO.BBL;
 using DAO.MapperManual;
 using Microsoft.CSharp.RuntimeBinder;
 using Model;
+using Model.Enum;
 using Model.Procucts;
 using System;
 using System.Collections.Generic;
@@ -21,60 +22,83 @@ namespace JuditeBot.Controllers
 
         [Route("signup")]
         [HttpPost]
-        public JsonResult<dynamic> signup()
+        public IHttpActionResult signup()
         {
             try
             {
-                Pizzaria pizzaria = new Pizzaria();
-                PizzariaRepositorio repositorio = new PizzariaRepositorio();
+                //Pizzaria pizzaria = new Pizzaria();
+                //PizzariaRepositorio repositorio = new PizzariaRepositorio();
 
-                //Incluindo usuários
-                IList<Users> usuarios = new List<Users>();
-                usuarios.Add(new Users { username = "diego", password = "123" });
-                usuarios.Add(new Users { username = "victor", password = "123" });
-                usuarios.Add(new Users { username = "leo", password = "123" });
-                pizzaria.users = usuarios;
+                ////Incluindo usuários
+                //IList<Users> usuarios = new List<Users>();
+                //usuarios.Add(new Users { username = "diego", password = "123" });
+                //usuarios.Add(new Users { username = "victor", password = "123" });
+                //usuarios.Add(new Users { username = "leo", password = "123" });
+                //pizzaria.users = usuarios;
 
-                //Incluindo métodos de pagamento
-                IList<PaymentMethod> metodosPagamento = new List<PaymentMethod>();
-                metodosPagamento.Add(new PaymentMethod { description = "Débito" });
-                metodosPagamento.Add(new PaymentMethod { description = "Crédito" });
-                metodosPagamento.Add(new PaymentMethod { description = "Dinheiro" });
-                pizzaria.paymentMethods = metodosPagamento;
+                ////Incluindo métodos de pagamento
+                //IList<CPaymentMethod> metodosPagamento = new List<CPaymentMethod> { new CPaymentMethod { paymentMethod = PaymentMethod.CREDIT }, new CPaymentMethod { paymentMethod = PaymentMethod.DEBIT }, new CPaymentMethod { paymentMethod = PaymentMethod.SODEXO }, new CPaymentMethod { paymentMethod = PaymentMethod.TR } };
+                //pizzaria.paymentMethods = metodosPagamento;
 
-                //Incluindo produtos
-                IList<Product> menus = new List<Product>();
-                Pizza pizza = new Pizza { name = "Muzzarela", avaible = true };
-                //Pizza pizzaCalabreza = new Pizza { name = "Calabreza", avaible = true };
-                Beverage bebida = new Beverage { name = "Coca Cola", avaible = true } ;
-                List<ProductInstanceEntity> productInstancePizza = new List<ProductInstanceEntity>();
-                List<ProductInstanceEntity> productInstanceBebida = new List<ProductInstanceEntity>();
-                ProductSize productSizeBig = new ProductSize { name = "Grande" };
-                ProductSize productSizeMedium = new ProductSize { name = "Médio" };
-                ProductSize productSizeBebida = new ProductSize { name = "2 litros" };
-                productInstancePizza.Add(new ProductInstanceEntity { cost = 30.00, Type = pizza.GetType().Name, productSize = productSizeBig });
-                productInstancePizza.Add(new ProductInstanceEntity { cost = 20.00, Type = pizza.GetType().Name, productSize = productSizeMedium });
-                productInstanceBebida.Add(new ProductInstanceEntity { cost = 6.00, Type = bebida.GetType().Name, productSize = productSizeBebida });
-                bebida.productInstance = productInstanceBebida;
-                pizza.productInstance = productInstancePizza;
-                //pizzaCalabreza.productInstance = productInstancePizza;
-                menus.Add((Product)pizza);
-                //menus.Add((Product)pizzaCalabreza);
-                menus.Add((Product)bebida);
-                pizzaria.menus = menus;
+                ////Incluindo produtos
+                //IList<Product> menus = new List<Product>();
+                //Product pizza = new Product { name = "Muzzarela", avaible = true, productType = ProductType.PIZZA };
+                //Product bebida = new Product { name = "Coca Cola", avaible = true, productType = ProductType.BEVERAGE };
+                //List<ProductInstance> productInstancePizza = new List<ProductInstance>();
+                //List<ProductInstance> productInstanceBebida = new List<ProductInstance>();
+                //ProductSize productSizeBig = new ProductSize { name = "Grande" };
+                //ProductSize productSizeMedium = new ProductSize { name = "Médio" };
+                //ProductSize productSizeBebida = new ProductSize { name = "2 litros" };
+                //productInstancePizza.Add(new ProductInstance { cost = 30.00, productSize = productSizeBig });
+                //productInstancePizza.Add(new ProductInstance { cost = 20.00, productSize = productSizeMedium });
+                //productInstanceBebida.Add(new ProductInstance { cost = 6.00, productSize = productSizeBebida });
+                //bebida.productInstance = productInstanceBebida;
+                //pizza.productInstance = productInstancePizza;
+                //menus.Add(pizza);
+                //menus.Add(bebida);
+                //pizzaria.menus = menus;
 
-                pizzaria.name = "Pizzaria teste";
-                pizzaria.deliveryTax = 10.00;
+                //pizzaria.name = "Pizzaria teste";
+                //pizzaria.deliveryTax = 10.00;
 
-                repositorio.AdicionarBBL(pizzaria);
-                dynamic retorno = new { sucesso = true, msg = "" };
-                return Json(retorno);
+                //repositorio.AdicionarBBL(pizzaria);
+
+                //PedidoRepositorio pedidoRepositorio = new PedidoRepositorio();
+                //Order order = new Order();
+                //order.Address = "Rua teste";
+                //order.clientName = "Joãozinho gorducho";
+                //order.created = DateTime.Now;
+                //using (var repositorio = new CPaymentMethodRepositorio())
+                //{
+                //    order.paymentMethodId = repositorio.GetAll().ToList<CPaymentMethod>()[0].Id;
+                //}
+
+                //using (var repositorio = new ProductInstanceRepositorio())
+                //{
+                //    var product = repositorio.GetAll().ToList<ProductInstance>();
+                //    order.productInstances = product;
+                //}
+                //order.ordersStatus = OrderStatus.WAITING;
+                //order.pizzariaId = 1;
+
+                //pedidoRepositorio.AdicionarBBL(order);
+
+
+                //PizzariaRepositorio pizzariaRepositorio = new PizzariaRepositorio();
+
+                //using (var repositorio = new PizzariaRepositorio())
+                //{
+                //    var pizzaria = repositorio.GetAll();
+                //}
+
+                //var pizzaria = repositorio.GetBBL(p => p.PizzariaId == 1);
+
+                return NotFound();
 
             }
             catch(Exception e)
             {
-                dynamic retorno = new { sucesso = false, msg = e.Message };
-                return Json(retorno);
+                return NotFound();
             }
         }
         /*[Route("signup")]

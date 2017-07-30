@@ -38,6 +38,7 @@ namespace JuditeBot.Providers
                            claims, OAuthDefaults.AuthenticationType);
 
                     retornoJson.Add("mensagem", "Operação Realizada com sucesso");
+                    c.Response.StatusCode = 200;
                     c.Validated(claimsIdentity);
                 }
                 else
