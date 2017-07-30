@@ -22,7 +22,7 @@ namespace JuditeBot.Controllers
 
         [Route("signup")]
         [HttpPost]
-        public JsonResult<dynamic> signup()
+        public IHttpActionResult signup()
         {
             try
             {
@@ -63,25 +63,25 @@ namespace JuditeBot.Controllers
 
                 //repositorio.AdicionarBBL(pizzaria);
 
-                PedidoRepositorio pedidoRepositorio = new PedidoRepositorio();
-                Order order = new Order();
-                order.Address = "Rua teste";
-                order.clientName = "Joãozinho gorducho";
-                order.created = DateTime.Now;
-                using (var repositorio = new CPaymentMethodRepositorio())
-                {
-                    order.paymentMethodId = repositorio.GetAll().ToList<CPaymentMethod>()[0].Id;
-                }
+                //PedidoRepositorio pedidoRepositorio = new PedidoRepositorio();
+                //Order order = new Order();
+                //order.Address = "Rua teste";
+                //order.clientName = "Joãozinho gorducho";
+                //order.created = DateTime.Now;
+                //using (var repositorio = new CPaymentMethodRepositorio())
+                //{
+                //    order.paymentMethodId = repositorio.GetAll().ToList<CPaymentMethod>()[0].Id;
+                //}
 
-                using (var repositorio = new ProductInstanceRepositorio())
-                {
-                    var product = repositorio.GetAll().ToList<ProductInstance>();
-                    order.productInstances = product;
-                }
-                order.ordersStatus = OrderStatus.WAITING;
-                order.pizzariaId = 1;
+                //using (var repositorio = new ProductInstanceRepositorio())
+                //{
+                //    var product = repositorio.GetAll().ToList<ProductInstance>();
+                //    order.productInstances = product;
+                //}
+                //order.ordersStatus = OrderStatus.WAITING;
+                //order.pizzariaId = 1;
 
-                pedidoRepositorio.AdicionarBBL(order);
+                //pedidoRepositorio.AdicionarBBL(order);
 
 
                 //PizzariaRepositorio pizzariaRepositorio = new PizzariaRepositorio();
@@ -93,14 +93,12 @@ namespace JuditeBot.Controllers
 
                 //var pizzaria = repositorio.GetBBL(p => p.PizzariaId == 1);
 
-                dynamic retorno = new { sucesso = true, msg = "" };
-                return Json(retorno);
+                return NotFound();
 
             }
             catch(Exception e)
             {
-                dynamic retorno = new { sucesso = false, msg = e.Message };
-                return Json(retorno);
+                return NotFound();
             }
         }
         /*[Route("signup")]

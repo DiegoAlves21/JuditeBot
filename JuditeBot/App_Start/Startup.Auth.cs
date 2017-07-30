@@ -6,6 +6,7 @@ using Owin;
 using Microsoft.Owin.Security.OAuth;
 using Microsoft.Owin;
 using JuditeBot.Providers;
+using System.Configuration;
 
 namespace JuditeBot
 {
@@ -21,7 +22,7 @@ namespace JuditeBot
             {
                 TokenEndpointPath = new PathString("/JuditeBot/signin"),
                 Provider = new ApplicationOAuthProvider(),
-                AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
+                AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(double.Parse(ConfigurationManager.AppSettings["TokenExpiration"])),
                 AllowInsecureHttp = true
             });
         }
