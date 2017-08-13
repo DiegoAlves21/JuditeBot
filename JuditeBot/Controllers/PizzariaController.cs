@@ -34,11 +34,9 @@ namespace JuditeBot.Controllers
 
                     List<dynamic> payments = new List<dynamic>();
 
-                    //Dictionary<int, string> payments = new Dictionary<int, string>();
-
                     foreach (CPaymentMethod pay in pizzaria.paymentMethods)
                     {
-                        payments.Add(new { id = pay.Id, paymentMethod = pay.paymentMethod.ToString() });
+                        payments.Add(new { name = pay.paymentMethod.ToString(), value = pay.paymentMethod });
                     }
 
                     return Ok(payments);

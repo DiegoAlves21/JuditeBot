@@ -9,6 +9,8 @@ using System.Web.Http;
 using Microsoft.Owin.Security;
 using System.Web;
 using System.Net.Http;
+using Model.Procucts;
+using Model.Enum;
 
 namespace JuditeBot.Controllers
 {
@@ -21,220 +23,264 @@ namespace JuditeBot.Controllers
             get { return HttpContext.Current.GetOwinContext().Authentication; }
         }
 
-        [Route("products")]
-        [Authorize]
-        [HttpPost]
-        public JsonResult<dynamic> Adicionar([FromBody]Product produto)
+
+        [Route("products/{name}/{size}/{type}/{available}/{p}/{per_page}/{s}/{s_dir}")]
+        [HttpGet]
+        public IHttpActionResult Listar(string name, string size, string type, bool? available, int p, int per_page, string s, string s_dir)
         {
-            dynamic resultado;
+            /*name = null;
+            size = null;
+            type = null;
+            available = null;
+            p = 0;
+            per_page = 0;
+            s = null;
+            s_dir = null;*/
 
-            var pizzariaId = int.Parse(this.Authentication.User.Claims.SingleOrDefault().Value);
-
-            try
+            if (this.Authentication.User.Identity.IsAuthenticated)
             {
-                using (var repositorio = new PizzariaRepositorio())
+                try
                 {
-                    if (produto == null)
+                    PizzariaRepositorio pizzariaRepositorio = new PizzariaRepositorio();
+                    var pizzariaId = int.Parse(this.Authentication.User.Claims.SingleOrDefault().Value);
+                    var pizzaria = pizzariaRepositorio.Get(pi => pi.PizzariaId == pizzariaId).SingleOrDefault();
+
+                    var produtos = FilterDeviceList(pizzaria.menus, name, size, type, available, p, per_page, s, s_dir);
+
+                    return Ok(produtos.ToList());
+                }
+                catch (Exception e)
+                {
+                    return InternalServerError(e);
+                }
+
+            }
+            else
+            {
+                return Unauthorized();
+            }
+
+        }
+
+        [Route("products")]
+        [HttpPost]
+        public IHttpActionResult Cadastrar([FromBody] Product product)
+        {
+            if (this.Authentication.User.Identity.IsAuthenticated)
+            {
+                try
+                {
+
+                    Product pizza = new Product { name = "Muzzarela", avaible = true, productType = ProductType.PIZZA };
+                    List<ProductInstance> productInstancePizza = new List<ProductInstance>();
+                    ProductSize productSizeBig = new ProductSize { name = "Grande" };
+                    ProductSize productSizeMedium = new ProductSize { name = "Médio" };
+                    productInstancePizza.Add(new ProductInstance { cost = 30.00, productSize = productSizeBig });
+                    productInstancePizza.Add(new ProductInstance { cost = 20.00, productSize = productSizeMedium });
+                    pizza.productInstance = productInstancePizza;
+
+                    product = pizza;
+
+                    if (true == true)// Aqui entra as validações
                     {
-                        resultado = new { msgRetorno = "Parâmetro recebido parece não estar certo, valor: "};
+                        PizzariaRepositorio pizzariaRepositorio = new PizzariaRepositorio();
+                        var pizzariaId = int.Parse(this.Authentication.User.Claims.SingleOrDefault().Value);
+                        var pizzaria = pizzariaRepositorio.Get(pi => pi.PizzariaId == pizzariaId).SingleOrDefault();
+
+                        pizzaria.menus.Add(product);
+                        pizzariaRepositorio.AtualizarBBL(pizzaria);
+
+                        return Created("Criado", product);
                     }
                     else
                     {
-                        var pizzaria = repositorio.Get(p => p.PizzariaId == pizzariaId).SingleOrDefault();
-
-                        if (pizzaria.menus == null)
-                        {
-                            pizzaria.menus = new List<Product>();
-                        }
-
-                        pizzaria.menus.Add(produto);
-
-                        repositorio.Atualizar(pizzaria);
-
-                        repositorio.SalvarTodos();
-
-                        resultado = new { msgRetorno = "Operação Realizada com sucesso" };
-
-                        
+                        return new System.Web.Http.Results.ResponseMessageResult(
+                            Request.CreateErrorResponse(
+                                (HttpStatusCode)422,
+                                new HttpError("Erros de validação ocorreram")
+                            )
+                        );
                     }
                     
-
-                    return Json(resultado);
                 }
+                catch (Exception e)
+                {
+                    return InternalServerError(e);
+                }
+
             }
-            catch (Exception e)
+            else
             {
-                resultado = new { msgRetorno = e.Message };
-                return Json(resultado);
+                return Unauthorized();
             }
 
         }
 
-        [Route("products")]
-        [Authorize]
+        [Route("products/{productId}")]
         [HttpGet]
-        public JsonResult<dynamic> Listar()
+        public IHttpActionResult Find(int productId)
         {
-            dynamic resultado;
-            HttpResponseMessage response = new HttpResponseMessage();
-            IList<dynamic> produtos = new List<dynamic>();
-            var pizzariaId = int.Parse(this.Authentication.User.Claims.SingleOrDefault().Value);
-            
-            try
+            if (this.Authentication.User.Identity.IsAuthenticated)
             {
-                using (var repositorio = new PizzariaRepositorio())
+                try
                 {
-                    var pizzaria = repositorio.Get(p => p.PizzariaId == pizzariaId).SingleOrDefault();
+                    ProdutoRepositorio produtoRepositorio = new ProdutoRepositorio();
+                    var product = produtoRepositorio.Get(pro => pro.Id == productId);
+                    return Ok(product.SingleOrDefault());
+                }
+                catch (Exception e)
+                {
+                    return InternalServerError(e);
+                }
 
-                    if (pizzaria.menus == null)
+            }
+            else
+            {
+                return Unauthorized();
+            }
+
+        }
+
+
+        [Route("products/{productId}")]
+        [HttpDelete]
+        public IHttpActionResult Delete(int productId)
+        {
+            if (this.Authentication.User.Identity.IsAuthenticated)
+            {
+                try
+                {
+                    ProdutoRepositorio produtoRepositorio = new ProdutoRepositorio();
+                    var produto = produtoRepositorio.Get(pro => pro.Id == productId).SingleOrDefault();
+
+                    PedidoRepositorio pedidoRepositorio = new PedidoRepositorio();
+                    var pedidos = pedidoRepositorio.GetAll().ToList<Order>();
+                    var contProdutos = pedidos.SelectMany(pe => pe.productInstances.Where(pro => pro.productId == productId)).Count();
+                    
+                    if(contProdutos == 0)
                     {
-                        response.StatusCode = HttpStatusCode.NotFound;
-                        this.ResponseMessage(response);
-                        resultado = new { msgRetorno = "Não há produtos cadastrados" };
+                        PizzariaRepositorio pizzariaRepositorio = new PizzariaRepositorio();
+                        var pizzariaId = int.Parse(this.Authentication.User.Claims.SingleOrDefault().Value);
+                        var pizzaria = pizzariaRepositorio.Get(pi => pi.PizzariaId == pizzariaId).SingleOrDefault();
+
+                        ProductInstanceRepositorio productInstanceRepositorio = new ProductInstanceRepositorio();
+                        foreach(ProductInstance productInstance in pizzaria.menus.Where(pro => pro.Id == productId).SingleOrDefault().productInstance)
+                        {
+                            productInstanceRepositorio.Excluir(prIns => prIns.Id == productInstance.Id);
+                            productInstanceRepositorio.SalvarTodos();
+                        }
+
+                        produtoRepositorio.Excluir(pro => pro.Id == productId);
+                        produtoRepositorio.SalvarTodos();
+
+                        /*pizzaria.menus.RemoveAt(pizzaria.menus.IndexOf(pizzaria.menus.Where(pro => pro.Id == productId).SingleOrDefault()));
+                        pizzariaRepositorio.AtualizarBBL(pizzaria);*/
                     }
                     else
                     {
-                        foreach (Product p in pizzaria.menus)
-                        {
-                            produtos.Add(new { Id = 1, nome = p.name, valor = p.avaible});
-                        }
-                        //this.NotFound();
-                        //response.StatusCode = HttpStatusCode.NotModified;
-                        this.ResponseMessage(response);
-                        this.ActionContext.Response = new HttpResponseMessage { StatusCode = HttpStatusCode.OK };
-
-                        resultado = new { msgRetorno = "Operação Realizada com sucesso", entidade = produtos };
+                        return BadRequest();
                     }
 
-                    return Json(resultado);
+                    return new ResponseMessageResult(Request.CreateResponse((HttpStatusCode)204));
                 }
+                catch (Exception e)
+                {
+                    return InternalServerError(e);
+                }
+
             }
-            catch (Exception e)
+            else
             {
-                resultado = new { msgRetorno = e.Message };
-                return Json(resultado);
+                return Unauthorized();
             }
 
         }
 
-        //[Route("Buscar/{id}")]
-        //[HttpGet]
-        //public JsonResult<Retorno> Buscar(int? id)
-        //{
-        //    Retorno resultado = new Retorno();
+        [Route("products-size")]
+        [HttpGet]
+        public IHttpActionResult GetProductsSize(string productType)
+        {
+            if (this.Authentication.User.Identity.IsAuthenticated)
+            {
+                try
+                {
+                    ProdutoRepositorio produtoRepositorio = new ProdutoRepositorio();
+                    var product = produtoRepositorio.GetAll();
+                    var productsPerType = product.Where(pro => pro.productType.ToString() == productType);
+                    var productsSizes = productsPerType.SelectMany(pr => pr.productInstance.Where(p => p.productSize.name != ""));
 
-        //    try
-        //    {
-        //        using (var repositorio = new ProdutoRepositorio())
-        //        {
-        //            if (id == null)
-        //            {
-        //                resultado = new Retorno() { codRetorno = "1", msgRetorno = "Parâmetro recebido parece não estar certo, valor: " + id };
+                    List<object> retorno = new List<object>();
 
-        //                return Json(resultado);
-        //            }
-        //            Produto produto = repositorio.Find(id);
-        //            resultado = new Retorno() { codRetorno = "0", msgRetorno = "Operação Realizada com sucesso", entidade = produto };
+                    foreach (ProductInstance prIns in productsSizes)
+                    {
+                        var re = (object) new { name = prIns.productSize.name };
+                        retorno.Add(re);
+                    }
 
-        //            return Json(resultado);
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        resultado = new Retorno() { codRetorno = "99", msgRetorno = e.Message };
-        //        return Json(resultado);
-        //    }
+                    return Ok(retorno.Distinct());
+                }
+                catch (Exception e)
+                {
+                    return InternalServerError(e);
+                }
 
-        //}
+            }
+            else
+            {
+                return Unauthorized();
+            }
 
-        //[Route("Buscar/{nome}")]
-        //[HttpPost]
-        //public JsonResult<Retorno> Buscar(string nome)
-        //{
-        //    Retorno resultado = new Retorno();
+        }
 
-        //    try
-        //    {
-        //        using (var repositorio = new ProdutoRepositorio())
-        //        {
-        //            if (String.IsNullOrEmpty(nome))
-        //            {
-        //                resultado = new Retorno() { codRetorno = "1", msgRetorno = "Parâmetro recebido parece não estar certo, valor(es): " + nome };
+        private static IQueryable<Product> FilterDeviceList(IList<Product> products, string name, string size, string type, bool? available, int p , int per_page, string s, string s_dir)
+        {
+            var query = products.AsQueryable();
+            int cont = 0;
 
-        //                return Json(resultado);
-        //            }
-        //            var produto = repositorio.Get(u => (u.nome == nome)).ToList().SingleOrDefault();
-        //            resultado = new Retorno() { codRetorno = "0", msgRetorno = "Operação Realizada com sucesso", entidade = produto };
+            if (name != null)
+            {
+                query = query.Where(pro => pro.name == name);
+            }
+            
+            //VERIFICAR E REFAZER PARA FUNCIONAMENTO CORRETO    
+            if (size != null)
+            {
+                query = query.Where(pro => pro.productInstance.Where(pr => pr.productSize.name == size).Count() > 0);
+            }
+                
+            if (type != null)
+            {
+                query = query.Where(pro => pro.productType.ToString() == type);
+            }
+            
+            if(available != null)
+            {
+                query = query.Where(pro => pro.avaible == available);
+            }
 
-        //            return Json(resultado);
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        resultado = new Retorno() { codRetorno = "99", msgRetorno = e.Message };
-        //        return Json(resultado);
-        //    }
+            //Verificar como vai ficar o p -> número da página
 
-        //}
+            if(per_page != 0)
+            {
+                query = query.Take(per_page);
+            }
+            
+            if(s != null)
+            {
+                if(s_dir == "ASC")
+                {
+                    query = query.OrderBy(pro => pro.name);
+                }
+                else
+                {
+                    query = query.OrderByDescending(pro => pro.name);
+                }
+                
+            }
 
-        //[Route("Excluir")]
-        //[HttpPost]
-        //public JsonResult<Retorno> Excluir([FromBody]Produto produto)
-        //{
-        //    Retorno resultado = new Retorno();
 
-        //    try
-        //    {
-        //        using (var repositorio = new ProdutoRepositorio())
-        //        {
-        //            if (produto.Id == 0)
-        //            {
-        //                resultado = new Retorno() { codRetorno = "1", msgRetorno = "Parâmetro recebido parece não estar certo, valor(es): " + produto };
+            return query;
+        }
 
-        //                return Json(resultado);
-        //            }
-        //            repositorio.Excluir(u => u.Id == produto.Id);
-        //            repositorio.SalvarTodos();
-        //            resultado = new Retorno() { codRetorno = "0", msgRetorno = "Exclusão Realizada com sucesso" };
-
-        //            return Json(resultado);
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        resultado = new Retorno() { codRetorno = "99", msgRetorno = e.Message };
-        //        return Json(resultado);
-        //    }
-
-        //}
-
-        //[Route("Atualizar")]
-        //[HttpPost]
-        //public JsonResult<Retorno> Atualizar([FromBody]Produto produto)
-        //{
-        //    Retorno resultado = new Retorno();
-
-        //    try
-        //    {
-        //        using (var repositorio = new ProdutoRepositorio())
-        //        {
-        //            if (produto == null)
-        //            {
-        //                resultado = new Retorno() { codRetorno = "1", msgRetorno = "Parâmetro recebido parece não estar certo, valor: " + produto };
-        //            }
-        //            repositorio.Atualizar(produto);
-        //            repositorio.SalvarTodos();
-        //            resultado = new Retorno() { codRetorno = "0", msgRetorno = "Operação Realizada com sucesso" };
-
-        //            return Json(resultado);
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        resultado = new Retorno() { codRetorno = "99", msgRetorno = e.Message };
-        //        return Json(resultado);
-        //    }
-
-        //}
     }
 }

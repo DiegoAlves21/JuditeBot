@@ -18,7 +18,7 @@ namespace Model
         public ProductType productType { get; set; }
 
         //public int productInstanceId { get; set; }
-        public IList<ProductInstance> productInstance { get; set; }
+        public virtual IList<ProductInstance> productInstance { get; set; }
 
         public int pizzariaId { get; set; }
         public Pizzaria pizzaria { get; set; }

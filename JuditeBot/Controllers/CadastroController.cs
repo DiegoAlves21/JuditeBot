@@ -93,7 +93,7 @@ namespace JuditeBot.Controllers
 
                 //var pizzaria = repositorio.GetBBL(p => p.PizzariaId == 1);
 
-                return NotFound();
+                return Ok();
 
             }
             catch(Exception e)

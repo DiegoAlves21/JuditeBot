@@ -58,6 +58,7 @@
     <Compile Include="BBL\PedidoTemporarioRepositorio.cs" />
     <Compile Include="BBL\PizzariaRepositorio.cs" />
     <Compile Include="BBL\ProductInstanceRepositorio.cs" />
+    <Compile Include="BBL\ProductSizeRepositorio.cs" />
     <Compile Include="BBL\ProdutoRepositorio.cs" />
     <Compile Include="BBL\UsuarioRepositorio.cs" />
     <Compile Include="Context\JuditeBotContext.cs" />

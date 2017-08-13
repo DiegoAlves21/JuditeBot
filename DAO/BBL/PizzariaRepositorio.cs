@@ -30,5 +30,16 @@ namespace DAO.BBL
             }
 
         }
+
+        public void AtualizarBBL(Pizzaria pizzaria)
+        {
+            using (var repositorio = this)
+            {
+                repositorio.Atualizar(pizzaria);
+                repositorio.SalvarTodos();
+                repositorio.Dispose();
+            }
+
+        }
     }
 }
