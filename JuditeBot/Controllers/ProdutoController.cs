@@ -11,6 +11,7 @@ using System.Web;
 using System.Net.Http;
 using Model.Procucts;
 using Model.Enum;
+using JuditeBot.Model;
 
 namespace JuditeBot.Controllers
 {
@@ -64,22 +65,13 @@ namespace JuditeBot.Controllers
 
         [Route("products")]
         [HttpPost]
-        public IHttpActionResult Cadastrar([FromBody] Product product)
+        public IHttpActionResult Cadastrar([FromBody] ProductViewModel productViewModel)
         {
             if (this.Authentication.User.Identity.IsAuthenticated)
             {
                 try
                 {
-
-                    Product pizza = new Product { name = "Muzzarela", avaible = true, productType = ProductType.PIZZA };
-                    List<ProductInstance> productInstancePizza = new List<ProductInstance>();
-                    ProductSize productSizeBig = new ProductSize { name = "Grande" };
-                    ProductSize productSizeMedium = new ProductSize { name = "Médio" };
-                    productInstancePizza.Add(new ProductInstance { cost = 30.00, productSize = productSizeBig });
-                    productInstancePizza.Add(new ProductInstance { cost = 20.00, productSize = productSizeMedium });
-                    pizza.productInstance = productInstancePizza;
-
-                    product = pizza;
+                    Product product = ConvertProductViewModel(productViewModel);
 
                     if (true == true)// Aqui entra as validações
                     {
@@ -90,7 +82,7 @@ namespace JuditeBot.Controllers
                         pizzaria.menus.Add(product);
                         pizzariaRepositorio.AtualizarBBL(pizzaria);
 
-                        return Created("Criado", product);
+                        return Created("Criado", productViewModel);
                     }
                     else
                     {
@@ -253,10 +245,11 @@ namespace JuditeBot.Controllers
                 query = query.Where(pro => pro.productType.ToString() == type);
             }
             
-            if(available != null)
+            //Verificar como fazer
+            /*if(available != null)
             {
-                query = query.Where(pro => pro.avaible == available);
-            }
+                query = query.SelectMany(pro => pro.productInstance.Where(p => p.available == available));
+            }*/
 
             //Verificar como vai ficar o p -> número da página
 
@@ -280,6 +273,40 @@ namespace JuditeBot.Controllers
 
 
             return query;
+        }
+
+        private Product ConvertProductViewModel(ProductViewModel productViewModel)
+        {
+            if(productViewModel != null)
+            {
+                Product product = new Product();
+
+                product.name = productViewModel.name;
+
+                if (productViewModel.type.ToUpper() == "PIZZA")
+                {
+                    product.productType = ProductType.PIZZA;
+                }
+                else
+                {
+                    product.productType = ProductType.BEVERAGE;
+                }
+
+                if (productViewModel.instances != null)
+                {
+                    product.productInstance = new List<ProductInstance>();
+                    foreach(Instances inst in productViewModel.instances)
+                    {
+                        product.productInstance.Add(new ProductInstance { productSize = new ProductSize { name = inst.size }, cost = inst.cost, available = inst.available });
+                    }
+                }
+                return product;
+            }
+            else
+            {
+                return null;
+            }
+            
         }
 
     }

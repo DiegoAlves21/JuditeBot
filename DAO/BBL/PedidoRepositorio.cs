@@ -28,5 +28,16 @@ namespace DAO.BBL
             }
 
         }
+
+        public void AtualizarBBL(Order order)
+        {
+            using (var repositorio = this)
+            {
+                repositorio.Atualizar(order);
+                repositorio.SalvarTodos();
+                repositorio.Dispose();
+            }
+
+        }
     }
 }

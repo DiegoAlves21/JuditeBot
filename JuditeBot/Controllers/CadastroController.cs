@@ -42,16 +42,16 @@ namespace JuditeBot.Controllers
 
                 ////Incluindo produtos
                 //IList<Product> menus = new List<Product>();
-                //Product pizza = new Product { name = "Muzzarela", avaible = true, productType = ProductType.PIZZA };
-                //Product bebida = new Product { name = "Coca Cola", avaible = true, productType = ProductType.BEVERAGE };
+                //Product pizza = new Product { name = "Muzzarela", productType = ProductType.PIZZA };
+                //Product bebida = new Product { name = "Coca Cola", productType = ProductType.BEVERAGE };
                 //List<ProductInstance> productInstancePizza = new List<ProductInstance>();
                 //List<ProductInstance> productInstanceBebida = new List<ProductInstance>();
                 //ProductSize productSizeBig = new ProductSize { name = "Grande" };
                 //ProductSize productSizeMedium = new ProductSize { name = "Médio" };
                 //ProductSize productSizeBebida = new ProductSize { name = "2 litros" };
-                //productInstancePizza.Add(new ProductInstance { cost = 30.00, productSize = productSizeBig });
-                //productInstancePizza.Add(new ProductInstance { cost = 20.00, productSize = productSizeMedium });
-                //productInstanceBebida.Add(new ProductInstance { cost = 6.00, productSize = productSizeBebida });
+                //productInstancePizza.Add(new ProductInstance { cost = 30.00, productSize = productSizeBig, available = true });
+                //productInstancePizza.Add(new ProductInstance { cost = 20.00, productSize = productSizeMedium, available = true });
+                //productInstanceBebida.Add(new ProductInstance { cost = 6.00, productSize = productSizeBebida, available = true });
                 //bebida.productInstance = productInstanceBebida;
                 //pizza.productInstance = productInstancePizza;
                 //menus.Add(pizza);

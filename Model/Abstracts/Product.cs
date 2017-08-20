@@ -13,7 +13,6 @@ namespace Model
     {
         public int Id { get; set; }
         public string name { get; set; }
-        public bool avaible { get; set; }
 
         public ProductType productType { get; set; }
 
