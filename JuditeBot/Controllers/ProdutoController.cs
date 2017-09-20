@@ -251,14 +251,14 @@ namespace JuditeBot.Controllers
                 query = query.SelectMany(pro => pro.productInstance.Where(p => p.available == available));
             }*/
 
-            //Verificar como vai ficar o p -> número da página
-
             if(per_page != 0)
             {
                 query = query.Take(per_page);
             }
-            
-            if(s != null)
+
+            //Pegar tal instancia de acordo com a quantidade de página
+
+            if (s != null)
             {
                 if(s_dir == "ASC")
                 {
