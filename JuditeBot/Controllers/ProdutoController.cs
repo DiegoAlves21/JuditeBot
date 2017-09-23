@@ -12,9 +12,11 @@ using System.Net.Http;
 using Model.Procucts;
 using Model.Enum;
 using JuditeBot.Model;
+using System.Web.Http.Cors;
 
 namespace JuditeBot.Controllers
 {
+    //[EnableCors(origins: "*", headers: "*", methods: "*")]
     [RoutePrefix("JuditeBot")]
     public class ProdutoController : ApiController
     {
@@ -197,15 +199,15 @@ namespace JuditeBot.Controllers
                 try
                 {
                     ProdutoRepositorio produtoRepositorio = new ProdutoRepositorio();
-                    var product = produtoRepositorio.GetAll();
-                    var productsPerType = product.Where(pro => pro.productType.ToString() == productType);
+                    var product = produtoRepositorio.GetAll().ToList<Product>();
+                    var productsPerType = product.Where(pro => pro.productType.ToString() == productType.ToUpper());
                     var productsSizes = productsPerType.SelectMany(pr => pr.productInstance.Where(p => p.productSize.name != ""));
 
                     List<object> retorno = new List<object>();
 
                     foreach (ProductInstance prIns in productsSizes)
                     {
-                        var re = (object) new { name = prIns.productSize.name };
+                        var re = (object) new { name = prIns.productSize.name, value = prIns.productSize.Id };
                         retorno.Add(re);
                     }
 

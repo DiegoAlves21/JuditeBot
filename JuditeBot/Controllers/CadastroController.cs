@@ -63,25 +63,25 @@ namespace JuditeBot.Controllers
 
                 //repositorio.AdicionarBBL(pizzaria);
 
-                //PedidoRepositorio pedidoRepositorio = new PedidoRepositorio();
-                //Order order = new Order();
-                //order.Address = "Rua teste";
-                //order.clientName = "Joãozinho gorducho";
-                //order.created = DateTime.Now;
-                //using (var repositorio = new CPaymentMethodRepositorio())
-                //{
-                //    order.paymentMethodId = repositorio.GetAll().ToList<CPaymentMethod>()[0].Id;
-                //}
+                PedidoRepositorio pedidoRepositorio = new PedidoRepositorio();
+                Order order = new Order();
+                order.Address = "Rua teste";
+                order.clientName = "Joãozinho gorducho";
+                order.created = DateTime.Now;
+                using (var repositorio = new CPaymentMethodRepositorio())
+                {
+                    order.paymentMethodId = repositorio.GetAll().ToList<CPaymentMethod>()[0].Id;
+                }
 
-                //using (var repositorio = new ProductInstanceRepositorio())
-                //{
-                //    var product = repositorio.GetAll().ToList<ProductInstance>();
-                //    order.productInstances = product;
-                //}
-                //order.ordersStatus = OrderStatus.WAITING;
-                //order.pizzariaId = 1;
+                using (var repositorio = new ProductInstanceRepositorio())
+                {
+                    var product = repositorio.GetAll().ToList<ProductInstance>();
+                    order.productInstances = product;
+                }
+                order.ordersStatus = OrderStatus.WAITING;
+                order.pizzariaId = 1;
 
-                //pedidoRepositorio.AdicionarBBL(order);
+                pedidoRepositorio.AdicionarBBL(order);
 
 
                 //PizzariaRepositorio pizzariaRepositorio = new PizzariaRepositorio();

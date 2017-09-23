@@ -54,6 +54,11 @@ namespace DAO.Repositorio
         {
             ctx.Dispose();
         }
+
+        public void Close()
+        {
+            ctx.Database.Connection.Close();
+        }
     }
 }
 

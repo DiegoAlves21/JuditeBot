@@ -13,7 +13,7 @@ namespace DAO.Context
 {
     public class JuditeBotContext : DbContext
     {
-        public JuditeBotContext() : base("JuditeBot")
+        public JuditeBotContext() : base("name=juditebotdbEntities")//base("JuditeBot")
         {
 
         }
