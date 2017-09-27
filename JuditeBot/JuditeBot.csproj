@@ -110,12 +110,16 @@
       <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.1\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Bot.Builder, Version=3.3.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bot.Builder.3.3.3\lib\net46\Microsoft.Bot.Builder.dll</HintPath>
+    <Reference Include="Microsoft.Bot.Builder, Version=3.9.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bot.Builder.3.9.1.0\lib\net46\Microsoft.Bot.Builder.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Bot.Connector, Version=3.3.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bot.Builder.3.3.3\lib\net46\Microsoft.Bot.Connector.dll</HintPath>
+    <Reference Include="Microsoft.Bot.Builder.Autofac, Version=3.9.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bot.Builder.3.9.1.0\lib\net46\Microsoft.Bot.Builder.Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Bot.Connector, Version=3.9.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bot.Builder.3.9.1.0\lib\net46\Microsoft.Bot.Connector.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -167,8 +171,8 @@
       <HintPath>..\packages\Microsoft.Extensions.Primitives.1.0.0-rc1-final\lib\net451\Microsoft.Extensions.Primitives.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.Protocol.Extensions, Version=1.0.2.33, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.IdentityModel.Protocol.Extensions.1.0.2.206221351\lib\net45\Microsoft.IdentityModel.Protocol.Extensions.dll</HintPath>
+    <Reference Include="Microsoft.IdentityModel.Protocol.Extensions, Version=1.0.40306.1554, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Protocol.Extensions.1.0.4.403061554\lib\net45\Microsoft.IdentityModel.Protocol.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -448,8 +452,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Drawing" />
-    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=4.0.20622.1351, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.4.0.2.206221351\lib\net45\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=4.0.40306.1554, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.4.0.4.403061554\lib\net45\System.IdentityModel.Tokens.Jwt.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Interactive.Async, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -574,6 +578,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="BBL\Login.cs" />
     <Compile Include="Bot\MessagesController.cs" />
+    <Compile Include="Bot\OrderDialog.cs" />
     <Compile Include="Controllers\CadastroController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PedidoController.cs" />
@@ -627,7 +632,9 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
