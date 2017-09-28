@@ -1,5 +1,9 @@
-﻿using Microsoft.Bot.Builder.Dialogs;
+﻿using AdaptiveCards;
+using DAO.BBL;
+using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
+using Model;
+using Model.Procucts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +16,11 @@ namespace JuditeBot.Bot
     public class OrderDialog : IDialog<object>
     {
         protected string aceitaPizza { get; set; }
-        protected string startDate { get; set; }
+        protected string maisSabores { get; set; }
+        protected int sabor { get; set; }
+        protected Dictionary<int,string> sabores { get; set; }
+        protected Dictionary<int, string> saboresSelecionados { get; set; }
+        protected List<Dictionary<int, string>> pizzasSelecionadas { get; set; }
 
         public async Task StartAsync(IDialogContext context)
         {
@@ -22,80 +30,147 @@ namespace JuditeBot.Bot
         public async Task MessageReceivedStartConversation(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             await context.PostAsync("Olá " + context.Activity.From.Name);
-
+            this.pizzasSelecionadas = new List<Dictionary<int, string>>();
             var message = context.MakeMessage();
-
-            List<CardImage> cardImages = new List<CardImage>();
-            cardImages.Add(new CardImage(url: "http://www.nutrivifalcao.com.br/wp-content/uploads/2016/11/pizza-site-or.jpg"));
-            cardImages.Add(new CardImage(url: "http://www.nutrivifalcao.com.br/wp-content/uploads/2016/11/pizza-site-or.jpg"));
-            List<CardAction> cardButtons = new List<CardAction>();
-            CardAction plButton = new CardAction()
-            {
-                Value = context.Activity.From.Id + "simPizza",
-                Type = "postBack",
-                Title = "Sim"
-            };
-
-            CardAction plButton2 = new CardAction()
-            {
-                Value = context.Activity.From.Id + "naoPizza",
-                Type = "postBack",
-                Title = "Não"
-            };
-            cardButtons.Add(plButton);
-            cardButtons.Add(plButton2);
-
-            HeroCard plCard = new HeroCard()
-            {
-                Title = "Fast Pizza",
-                Subtitle = "Aceita uma Pizza?",
-                Images = cardImages,
-                Buttons = cardButtons
-            };
-            Attachment plAttachment = plCard.ToAttachment();
-
             message.Attachments = new List<Attachment>();
-            message.Attachments.Add(plAttachment);
-
+            message.Attachments.Add(BotaoPergunta(context.Activity.From.Id, "Aceita uma Pizza?"));
             await context.PostAsync(message);
             context.Wait(MessageReceivedAceitaPizza); // State transition: wait for user to provide registration number
         }
 
         public async Task MessageReceivedAceitaPizza(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
-            this.aceitaPizza = (await argument).Text;
-            await context.PostAsync("When do you want cover to start?");
-            context.Wait(MessageReceivedCoverStart); // State transition: wait for user to provide cover start date
+
+            if (this.sabores == null)
+            {
+                var aceitaPizza = (await argument).Text;
+
+                if (aceitaPizza.Replace(context.Activity.From.Id, "").ToUpper() == "SIMPIZZA" || this.aceitaPizza.Replace(context.Activity.From.Id, "").ToUpper() == "SIMPIZZA")
+                {
+                    await context.PostAsync("Selecione os sabores: ");
+                    var message = context.MakeMessage();
+                    message.Attachments = new List<Attachment>();
+                    message.Attachments.Add(BotaoCardapio());
+                    
+                    await context.PostAsync(message);
+                    context.Wait(MessageReceivedCoverStart);
+                }
+                else
+                {
+                    if(this.pizzasSelecionadas.Count > 0)
+                    {
+                        await context.PostAsync("Deseja Alguma bebida? ");
+                        context.Done<object>(new object()); // Signal completion
+                    }
+                    else
+                    {
+                        await context.PostAsync("Tudo bem " + context.Activity.From.Name + ", agradecemos o seu contato! Quem sabe em uma próxima =)");
+                        context.Done<object>(new object());
+                    }
+                }
+            }
+            else
+            {
+                this.maisSabores = (await argument).Text;
+
+                if (this.maisSabores.Replace(context.Activity.From.Id, "").ToUpper() == "SIMPIZZA")
+                {
+                    await context.PostAsync("Selecione os sabores: ");
+                    var message = context.MakeMessage();
+                    message.Attachments = new List<Attachment>();
+                    message.Attachments.Add(BotaoCardapio());
+
+                    await context.PostAsync(message);
+                    context.Wait(MessageReceivedCoverStart);
+                }
+                else
+                {
+                    await context.PostAsync("Pizza Selecionada! Sabor: " + this.saboresSelecionados.First().Value + " !");
+                    var message = context.MakeMessage();
+                    message.Attachments = new List<Attachment>();
+                    pizzasSelecionadas.Add(this.saboresSelecionados);
+                    this.saboresSelecionados = null;
+                    this.sabores = null;
+                    message.Attachments.Add(BotaoPergunta(context.Activity.From.Id, "Deseja pedir mais pizzas ? "));
+                    await context.PostAsync(message);
+                    context.Wait(MessageReceivedPizzaSelecionada);
+                }
+
+            }
+
         }
 
         public async Task MessageReceivedCoverStart(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
-            this.startDate = (await argument).Text;
-            // do your search/aggregation here
-            await context.PostAsync($"OK, I found these deals for {aceitaPizza} starting {startDate}...");
-            context.Done<object>(new object()); // Signal completion
+            var sabor = (await argument).Text;
+            this.sabor =  int.Parse(sabor);
+            this.saboresSelecionados.Add(this.sabores.Where(a => a.Key == this.sabor).Select(aa => aa.Key).SingleOrDefault(), this.sabores.Where(a => a.Key == this.sabor).Select(aa => aa.Value).SingleOrDefault());
+            this.sabores.Remove(this.sabor);
+            if(this.saboresSelecionados.Count >= 2)
+            {
+                await context.PostAsync("Pizza Selecionada! Sabores: " + this.saboresSelecionados.First().Value + " e " + this.saboresSelecionados.Last().Value + " !");
+                var message = context.MakeMessage();
+                message.Attachments = new List<Attachment>();
+                pizzasSelecionadas.Add(this.saboresSelecionados);
+                this.saboresSelecionados = null;
+                this.sabores = null;
+                message.Attachments.Add(BotaoPergunta(context.Activity.From.Id, "Deseja pedir mais pizzas ? "));
+                await context.PostAsync(message);
+                context.Wait(MessageReceivedAceitaPizza);
+            }
+            else
+            {
+                var message = context.MakeMessage();
+                message.Attachments = new List<Attachment>();
+                message.Attachments.Add(BotaoPergunta(context.Activity.From.Id, "Deseja mais algum sabor ? "));
+                await context.PostAsync(message);
+                context.Wait(MessageReceivedAceitaPizza);
+            }
+            
+            //context.Done<object>(new object()); // Signal completion
         }
 
-        private Activity BotaoInicial(Activity activity)
+        public async Task MessageReceivedPizzaSelecionada(IDialogContext context, IAwaitable<IMessageActivity> argument)
+        {   
+            this.aceitaPizza = (await argument).Text;
+            //this.saboresSelecionados = null;
+            //this.sabores = null;
+            if (aceitaPizza.Replace(context.Activity.From.Id, "").ToUpper() == "SIMPIZZA" || this.aceitaPizza.Replace(context.Activity.From.Id, "").ToUpper() == "SIMPIZZA")
+            {
+                await context.PostAsync("Selecione os sabores: ");
+                var message = context.MakeMessage();
+                message.Attachments = new List<Attachment>();
+                message.Attachments.Add(BotaoCardapio());
+
+                await context.PostAsync(message);
+                context.Wait(MessageReceivedCoverStart);
+            }
+            else
+            {
+                await context.PostAsync("Deseja Alguma bebida? ");
+                context.Done<object>(new object()); // Signal completion
+            }
+            //await context.PostAsync("Pizza Selecionada! Sabores: " + this.sabores.First().Value + " e " + this.sabores.Last().Value + " !");
+
+        }
+
+        private Attachment BotaoPergunta(string UserId, string subtitle)
         {
-            Activity replyToConversation = activity.CreateReply("Olá " + activity.From.Name);
-            replyToConversation.Recipient = activity.From;
-            replyToConversation.Type = "message";
-            replyToConversation.Attachments = new List<Attachment>();
+
             List<CardImage> cardImages = new List<CardImage>();
             cardImages.Add(new CardImage(url: "http://www.nutrivifalcao.com.br/wp-content/uploads/2016/11/pizza-site-or.jpg"));
             cardImages.Add(new CardImage(url: "http://www.nutrivifalcao.com.br/wp-content/uploads/2016/11/pizza-site-or.jpg"));
             List<CardAction> cardButtons = new List<CardAction>();
             CardAction plButton = new CardAction()
             {
-                Value = "8655481simPizza",
+                Value = UserId + "simPizza",
                 Type = "postBack",
                 Title = "Sim"
             };
 
             CardAction plButton2 = new CardAction()
             {
-                Value = "8655481naoPizza",
+                Value = UserId + "naoPizza",
                 Type = "postBack",
                 Title = "Não"
             };
@@ -105,14 +180,98 @@ namespace JuditeBot.Bot
             HeroCard plCard = new HeroCard()
             {
                 Title = "Fast Pizza",
-                Subtitle = "Aceita uma Pizza?",
+                Subtitle = subtitle,
                 Images = cardImages,
                 Buttons = cardButtons
             };
             Attachment plAttachment = plCard.ToAttachment();
-            replyToConversation.Attachments.Add(plAttachment);
 
-            return replyToConversation;
+            return plAttachment;
+        }
+
+        private Attachment BotaoCardapio()//Falta Implementar
+        {
+
+            List<Product> produtos = new List<Product>();
+            using (var repositorio = new PizzariaRepositorio())
+            {
+                var pizzaria = repositorio.Get(p => p.PizzariaId == 1).SingleOrDefault();
+                produtos = pizzaria.menus.Where(p => p.productType.ToString().ToUpper() == "PIZZA").ToList<Product>();
+            }
+
+            List<CardAction> cardButtons = new List<CardAction>();
+            List<CardImage> cardImages = new List<CardImage>();
+            cardImages.Add(new CardImage(url: "https://1.bp.blogspot.com/-6ziUbuUGS1I/VuHuua1N2hI/AAAAAAAAAVI/eU17sMzkpLI-npKJPwypY_dU4gGf7Epaw/s1600/CARDAPIO.png"));
+
+            if(sabores == null)
+            {
+                this.sabores = new Dictionary<int, string>();
+                this.saboresSelecionados = new Dictionary<int, string>();
+
+                foreach (var produto in produtos)
+                {
+                    this.sabores.Add(produto.Id, produto.name);
+                    CardAction plButton = new CardAction()
+                    {
+                        Value = produto.Id.ToString(),
+                        Type = "postBack",
+                        Title = produto.name
+                    };
+
+                    cardButtons.Add(plButton);
+                }
+            }
+            else
+            {
+                foreach (var produto in sabores)
+                {
+                    CardAction plButton = new CardAction()
+                    {
+                        Value = produto.Key.ToString(),
+                        Type = "postBack",
+                        Title = produto.Value
+                    };
+
+                    cardButtons.Add(plButton);
+                }
+            }
+            
+
+            var plCard = new ThumbnailCard()
+            {
+                Title = "Cardápio",
+                Subtitle = "Escolha o sabor",
+                Buttons = cardButtons,
+                Images = cardImages
+            };
+
+            Attachment plAttachment = plCard.ToAttachment();
+
+            //AdaptiveCard card = new AdaptiveCard();
+
+            //card.Body.Add(new TextBlock() { Text = "Escolha a sua pizza" });
+            //card.BackgroundImage = "https://1.bp.blogspot.com/-6ziUbuUGS1I/VuHuua1N2hI/AAAAAAAAAVI/eU17sMzkpLI-npKJPwypY_dU4gGf7Epaw/s1600/CARDAPIO.png";
+
+            //var choices = new List<Choice>();
+
+            //foreach (var produto in produtos)
+            //{
+            //    choices.Add(new Choice() { Title = produto.name , Value = produto.name });
+            //}
+
+            //card.Body.Add(new ChoiceSet() {
+            //    Id = "snooze",
+            //    Style = ChoiceInputStyle.Compact,
+            //    Choices = choices
+            //});
+
+            //Attachment plAttachment = new Attachment()
+            //{
+            //    ContentType = AdaptiveCard.ContentType,
+            //    Content = card
+            //};
+
+            return plAttachment;
         }
     }
 }
