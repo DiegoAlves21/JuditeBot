@@ -13,6 +13,7 @@ namespace Model
     {
         public int Id { get; set; }
         public string clientName { get; set; }
+        public string clientInformations { get; set; }
         public string Address { get; set; }
         public DateTime created { get; set; }
 

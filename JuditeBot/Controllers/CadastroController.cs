@@ -42,22 +42,74 @@ namespace JuditeBot.Controllers
 
                 ////Incluindo produtos
                 //IList<Product> menus = new List<Product>();
-                //Product pizza = new Product { name = "Muzzarela", productType = ProductType.PIZZA };
-                //Product bebida = new Product { name = "Coca Cola", productType = ProductType.BEVERAGE };
-                //List<ProductInstance> productInstancePizza = new List<ProductInstance>();
-                //List<ProductInstance> productInstanceBebida = new List<ProductInstance>();
-                //ProductSize productSizeBig = new ProductSize { name = "Grande" };
-                //ProductSize productSizeMedium = new ProductSize { name = "Médio" };
-                //ProductSize productSizeBebida = new ProductSize { name = "2 litros" };
-                //productInstancePizza.Add(new ProductInstance { cost = 30.00, productSize = productSizeBig, available = true });
-                //productInstancePizza.Add(new ProductInstance { cost = 20.00, productSize = productSizeMedium, available = true });
-                //productInstanceBebida.Add(new ProductInstance { cost = 6.00, productSize = productSizeBebida, available = true });
-                //bebida.productInstance = productInstanceBebida;
-                //pizza.productInstance = productInstancePizza;
-                //menus.Add(pizza);
-                //menus.Add(bebida);
-                //pizzaria.menus = menus;
 
+                //Product pizza = new Product { name = "Muzzarela", productType = ProductType.PIZZA };
+                //Product pizzaCalabresa = new Product { name = "Calabresa", productType = ProductType.PIZZA };
+                //Product pizzaQuatroQueijos = new Product { name = "Quatro Queijos", productType = ProductType.PIZZA };
+                //Product pizzaPeperoni = new Product { name = "Peperoni", productType = ProductType.PIZZA };
+                //Product bebida = new Product { name = "Coca Cola", productType = ProductType.BEVERAGE };
+                //Product bebidaDelVale = new Product { name = "Del Vale Uva", productType = ProductType.BEVERAGE };
+                //Product bebidaH2oh = new Product { name = "H2oh", productType = ProductType.BEVERAGE };
+
+                //List<ProductInstance> productInstancePizza = new List<ProductInstance>();
+                //List<ProductInstance> productInstancePizzaCalabresa = new List<ProductInstance>();
+                //List<ProductInstance> productInstancePizzaQuatroQueijos = new List<ProductInstance>();
+                //List<ProductInstance> productInstancePizzaPeperoni = new List<ProductInstance>();
+                //List<ProductInstance> productInstanceBebida = new List<ProductInstance>();
+                //List<ProductInstance> productInstanceBebidaDelVale = new List<ProductInstance>();
+                //List<ProductInstance> productInstanceBebidaH2oh = new List<ProductInstance>();
+
+                ////ProductSize productSizeBig = new ProductSize { name = "Grande" };
+                ////ProductSize productSizeMedium = new ProductSize { name = "Médio" };
+                ////ProductSize productSizeBebida = new ProductSize { name = "2 litros" };
+
+                //productInstancePizza.Add(new ProductInstance { cost = 30.00, productSize = new ProductSize { name = "Grande" }, available = true });
+                //productInstancePizza.Add(new ProductInstance { cost = 20.00, productSize = new ProductSize { name = "Medio" }, available = true });
+                //productInstancePizza.Add(new ProductInstance { cost = 10.00, productSize = new ProductSize { name = "Pequeno" }, available = true });
+                ////
+                //productInstancePizzaCalabresa.Add(new ProductInstance { cost = 25.00, productSize = new ProductSize { name = "Grande" }, available = true });
+                //productInstancePizzaCalabresa.Add(new ProductInstance { cost = 15.00, productSize = new ProductSize { name = "Medio" }, available = true });
+                //productInstancePizzaCalabresa.Add(new ProductInstance { cost = 8.00, productSize = new ProductSize { name = "Pequeno" }, available = true });
+                ////
+                //productInstancePizzaQuatroQueijos.Add(new ProductInstance { cost = 35.00, productSize = new ProductSize { name = "Grande" }, available = true });
+                //productInstancePizzaQuatroQueijos.Add(new ProductInstance { cost = 25.00, productSize = new ProductSize { name = "Medio" }, available = true });
+                //productInstancePizzaQuatroQueijos.Add(new ProductInstance { cost = 15.00, productSize = new ProductSize { name = "Pequeno" }, available = true });
+                ////
+                //productInstancePizzaPeperoni.Add(new ProductInstance { cost = 30.00, productSize = new ProductSize { name = "Grande" }, available = true });
+                //productInstancePizzaPeperoni.Add(new ProductInstance { cost = 20.00, productSize = new ProductSize { name = "Medio" }, available = true });
+                //productInstancePizzaPeperoni.Add(new ProductInstance { cost = 10.00, productSize = new ProductSize { name = "Pequeno" }, available = true });
+                ////
+                //productInstanceBebida.Add(new ProductInstance { cost = 6.00, productSize = new ProductSize { name = "2 litros" }, available = true });
+                //productInstanceBebida.Add(new ProductInstance { cost = 2.00, productSize = new ProductSize { name = "500 ml" }, available = true });
+                //productInstanceBebida.Add(new ProductInstance { cost = 4.00, productSize = new ProductSize { name = "1 litro" }, available = true });
+                ////
+                //productInstanceBebidaDelVale.Add(new ProductInstance { cost = 5.00, productSize = new ProductSize { name = "2 litros" }, available = true });
+                //productInstanceBebidaDelVale.Add(new ProductInstance { cost = 2.00, productSize = new ProductSize { name = "500 ml" }, available = true });
+                //productInstanceBebidaDelVale.Add(new ProductInstance { cost = 3.00, productSize = new ProductSize { name = "1 litro" }, available = true });
+                ////
+                //productInstanceBebidaH2oh.Add(new ProductInstance { cost = 5.00, productSize = new ProductSize { name = "2 litros" }, available = true });
+                //productInstanceBebidaH2oh.Add(new ProductInstance { cost = 2.00, productSize = new ProductSize { name = "500 ml" }, available = true });
+                //productInstanceBebidaH2oh.Add(new ProductInstance { cost = 3.00, productSize = new ProductSize { name = "1 litro" }, available = true });
+                ////
+                //bebida.productInstance = productInstanceBebida;
+                //bebidaDelVale.productInstance = productInstanceBebidaDelVale;
+                //bebidaH2oh.productInstance = productInstanceBebidaH2oh;
+                ////
+                //pizza.productInstance = productInstancePizza;
+                //pizzaCalabresa.productInstance = productInstancePizzaCalabresa;
+                //pizzaPeperoni.productInstance = productInstancePizzaPeperoni;
+                //pizzaQuatroQueijos.productInstance = productInstancePizzaQuatroQueijos;
+                ////
+                //menus.Add(pizza);
+                //menus.Add(pizzaCalabresa);
+                //menus.Add(pizzaPeperoni);
+                //menus.Add(pizzaQuatroQueijos);
+                ////
+                //menus.Add(bebida);
+                //menus.Add(bebidaDelVale);
+                //menus.Add(bebidaH2oh);
+                ////
+                //pizzaria.menus = menus;
                 //pizzaria.name = "Pizzaria teste";
                 //pizzaria.deliveryTax = 10.00;
 

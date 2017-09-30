@@ -6,9 +6,8 @@ using System.Web;
 namespace JuditeBot.Bot
 {
     [Serializable]
-    public class PizzasSelecionadas
+    public class BebidasSelecionadas
     {
-        public Dictionary<int,string> sabores { get; set; }
-        public string tamanho { get; set; }
+        public Dictionary<int, string> bebidas { get; set; }
     }
 }
