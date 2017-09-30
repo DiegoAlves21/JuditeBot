@@ -9,8 +9,9 @@ namespace Model
     public enum OrderStatus 
     {
         WAITING = 1,
-        OUT_FOR_DELIVERY = 2,
-        DONE = 3,
-        CANCELED = 4
+        PREPARING = 2,
+        OUT_FOR_DELIVERY = 3,
+        DONE = 4,
+        CANCELED = 5
     }
 }

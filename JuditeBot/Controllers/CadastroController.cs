@@ -117,8 +117,8 @@ namespace JuditeBot.Controllers
 
                 PedidoRepositorio pedidoRepositorio = new PedidoRepositorio();
                 Order order = new Order();
-                order.Address = "Rua teste";
-                order.clientName = "Joãozinho gorducho";
+                order.Address = "QUE SACOOOO";
+                order.clientName = "NÃO AGUENTO MAIS ESSE TCC";
                 order.created = DateTime.Now;
                 using (var repositorio = new CPaymentMethodRepositorio())
                 {
@@ -127,7 +127,7 @@ namespace JuditeBot.Controllers
 
                 using (var repositorio = new ProductInstanceRepositorio())
                 {
-                    var product = repositorio.GetAll().ToList<ProductInstance>();
+                    var product = repositorio.GetAll().Take(1).ToList<ProductInstance>();
                     order.productInstances = product;
                 }
                 order.ordersStatus = OrderStatus.WAITING;

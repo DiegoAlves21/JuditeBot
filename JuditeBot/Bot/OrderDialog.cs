@@ -17,14 +17,17 @@ namespace JuditeBot.Bot
     {
         protected string aceitaPizza { get; set; }
         protected string maisSabores { get; set; }
+        protected string bebida { get; set; }
         protected int sabor { get; set; }
+        protected string pagamento { get; set; }
         protected List<string> tamanhos { get; set; }
         protected Dictionary<int, string> sabores { get; set; }
         //protected Dictionary<int, string> saboresTamanho { get; set; }
         protected Dictionary<int, string> bebidas { get; set; }
         protected Dictionary<int, string> saboresSelecionados { get; set; }
         protected List<PizzasSelecionadas> pizzasSelecionadas { get; set; }
-        protected BebidasSelecionadas bebidasSelecionadas { get; set; }
+        protected List<BebidasSelecionadas> bebidasSelecionadas { get; set; }
+        protected double totalPedido { get; set; }
 
         public async Task StartAsync(IDialogContext context)
         {
@@ -35,8 +38,7 @@ namespace JuditeBot.Bot
         {
             await context.PostAsync("Olá " + context.Activity.From.Name);
             this.pizzasSelecionadas = new List<PizzasSelecionadas>();
-            this.bebidasSelecionadas = new BebidasSelecionadas();
-            this.bebidasSelecionadas.bebidas = new Dictionary<int, string>();
+            this.bebidasSelecionadas = new List<BebidasSelecionadas>();
             var message = context.MakeMessage();
             message.Attachments = new List<Attachment>();
             message.Attachments.Add(BotaoPergunta(context.Activity.From.Id, "Aceita uma Pizza?"));
@@ -49,9 +51,9 @@ namespace JuditeBot.Bot
 
             if (this.sabores == null)
             {
-                var aceitaPizza = (await argument).Text;
+                this.aceitaPizza = (await argument).Text;
 
-                if (aceitaPizza.Replace(context.Activity.From.Id, "").ToUpper() == "SIMPIZZA" || this.aceitaPizza.Replace(context.Activity.From.Id, "").ToUpper() == "SIMPIZZA")
+                if (this.aceitaPizza.Replace(context.Activity.From.Id, "").ToUpper() == "SIMPIZZA")
                 {
                     await context.PostAsync("Selecione os sabores: ");
                     var message = context.MakeMessage();
@@ -152,7 +154,7 @@ namespace JuditeBot.Bot
             this.aceitaPizza = (await argument).Text;
             //this.saboresSelecionados = null;
             //this.sabores = null;
-            if (aceitaPizza.Replace(context.Activity.From.Id, "").ToUpper() == "SIMPIZZA" || this.aceitaPizza.Replace(context.Activity.From.Id, "").ToUpper() == "SIMPIZZA")
+            if (this.aceitaPizza.Replace(context.Activity.From.Id, "").ToUpper() == "SIMPIZZA")
             {
                 await context.PostAsync("Selecione os sabores: ");
                 var message = context.MakeMessage();
@@ -190,30 +192,34 @@ namespace JuditeBot.Bot
             }
             else
             {
-                await context.PostAsync("Valor do pedido e qual a forma de pagamento");
-                context.Done<object>(new object()); // Signal completion
+                await context.PostAsync("Valor do seu pedido é: R$" + CalculaValorPedido() + "!");
+                await context.PostAsync("Selecione o método de pagamento: ");
+                var message = context.MakeMessage();
+                message.Attachments = new List<Attachment>();
+                message.Attachments.Add(BotaoMetodoPagamento());
+                await context.PostAsync(message);
+                context.Wait(MessageReceivedMetodoPag);
+                //context.Done<object>(new object()); // Signal completion
             }
 
         }
 
-        //public async Task MessageReceivedSelecionarTamBebida(IDialogContext context, IAwaitable<IMessageActivity> argument)
-        //{
-        //    var tamanho = (await argument).Text;
-
-        //    await context.PostAsync("Bebida Selecionada.");
-        //    var message = context.MakeMessage();
-        //    message.Attachments = new List<Attachment>();
-        //    message.Attachments.Add(BotaoPergunta(context.Activity.From.Id, "Deseja mais Alguma bebida? "));
-        //    await context.PostAsync(message);
-        //    context.Wait(MessageReceivedSelecionandoBebida);
-
-        //}
-
         public async Task MessageReceivedBebidaSelecionada(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
-            var bebida = (await argument).Text;
-            this.bebidasSelecionadas.bebidas.Add(this.bebidas.Where(a => a.Key == int.Parse(bebida)).Select(aa => aa.Key).SingleOrDefault(), this.bebidas.Where(a => a.Key == int.Parse(bebida)).Select(aa => aa.Value).SingleOrDefault());
+            this.bebida = (await argument).Text;
+            await context.PostAsync("Bebida Selecionada. Escolha o seu tamanho: ");
+            var message = context.MakeMessage();
+            message.Attachments = new List<Attachment>();
+            message.Attachments.Add(BotaoTamanhosBebida());
+            await context.PostAsync(message);
+            context.Wait(MessageReceivedSelecionarTamBebida);
 
+        }
+
+        public async Task MessageReceivedSelecionarTamBebida(IDialogContext context, IAwaitable<IMessageActivity> argument)
+        {
+            var tamanho = (await argument).Text;
+            this.bebidasSelecionadas.Add(new BebidasSelecionadas() { key = this.bebidas.Where(a => a.Key == int.Parse(bebida)).Select(aa => aa.Key).SingleOrDefault(), value = this.bebidas.Where(a => a.Key == int.Parse(bebida)).Select(aa => aa.Value).SingleOrDefault(), tamanho = tamanho });
             await context.PostAsync("Bebida Selecionada.");
             var message = context.MakeMessage();
             message.Attachments = new List<Attachment>();
@@ -234,6 +240,14 @@ namespace JuditeBot.Bot
             message.Attachments.Add(BotaoPergunta(context.Activity.From.Id, "Deseja mais Alguma Pizza? "));
             await context.PostAsync(message);
             context.Wait(MessageReceivedAceitaPizza);
+
+        }
+
+        public async Task MessageReceivedMetodoPag(IDialogContext context, IAwaitable<IMessageActivity> argument)
+        {
+            this.pagamento = (await argument).Text;
+            await context.PostAsync("Método de pagamento selecionado.");
+            context.Done<object>(new object()); // Signal completion
 
         }
 
@@ -434,7 +448,7 @@ namespace JuditeBot.Bot
                 {
                     CardAction plButton = new CardAction()
                     {
-                        Value = productInstance.Id.ToString(),
+                        Value = productInstance.productSize.name,
                         Type = "postBack",
                         Title = productInstance.productSize.name
                     };
@@ -455,6 +469,138 @@ namespace JuditeBot.Bot
             
 
             return plAttachment;
+        }
+
+        private Attachment BotaoTamanhosBebida()//Falta Implementar
+        {
+            List<CardAction> cardButtons = new List<CardAction>();
+            List<Product> produtos = new List<Product>();
+
+            using (var repositorio = new PizzariaRepositorio())
+            {
+                var pizzaria = repositorio.Get(p => p.PizzariaId == 1).SingleOrDefault();
+                produtos = pizzaria.menus.Where(p => p.productType.ToString().ToUpper() == "BEVERAGE").ToList<Product>();
+
+                foreach (var productInstance in produtos[0].productInstance.Take(3))
+                {
+                    CardAction plButton = new CardAction()
+                    {
+                        Value = productInstance.productSize.name,
+                        Type = "postBack",
+                        Title = productInstance.productSize.name
+                    };
+
+                    cardButtons.Add(plButton);
+                }
+
+            }
+
+            var plCard = new ThumbnailCard()
+            {
+                Title = "Opções",
+                Subtitle = "Escolha o tamanho",
+                Buttons = cardButtons
+            };
+
+            Attachment plAttachment = plCard.ToAttachment();
+
+
+            return plAttachment;
+        }
+
+        private Attachment BotaoMetodoPagamento()//Falta Implementar
+        {
+            Pizzaria pizzaria = new Pizzaria();
+            List<CardAction> cardButtons = new List<CardAction>();
+
+            using (var repositorio = new PizzariaRepositorio())
+            {
+                pizzaria = repositorio.Get(p => p.PizzariaId == 1).SingleOrDefault();
+                foreach (var metodoPagamento in pizzaria.paymentMethods)
+                {
+                    CardAction plButton = new CardAction()
+                    {
+                        Value = metodoPagamento.Id.ToString(),
+                        Type = "postBack",
+                        Title = metodoPagamento.paymentMethod.ToString()
+                    };
+
+                    cardButtons.Add(plButton);
+                }
+            }
+
+            var plCard = new ThumbnailCard()
+            {
+                Title = "Pagamento",
+                Subtitle = "Escolha o método",
+                Buttons = cardButtons
+            };
+
+            Attachment plAttachment = plCard.ToAttachment();
+
+            return plAttachment;
+        }
+
+        private string CalculaValorPedido()
+        {
+            totalPedido = 0;
+            double maiorSabor = 0;
+            List<Product> pizzas = new List<Product>();
+            List<Product> bebidas = new List<Product>();
+            using (var repositorio = new PizzariaRepositorio())
+            {
+                var pizzaria = repositorio.Get(p => p.PizzariaId == 1).SingleOrDefault();
+                pizzas = pizzaria.menus.Where(p => p.productType.ToString().ToUpper() == "PIZZA").ToList<Product>();
+
+                foreach(PizzasSelecionadas p in pizzasSelecionadas)
+                {
+                    foreach(var sabor in p.sabores)
+                    {
+                        var produto = (Product)pizzas.Where(pr => pr.Id == sabor.Key).SingleOrDefault();
+                        var nomeProduto = "";
+                        //var instance = (ProductInstance)produto.productInstance.Where(pInstance => pInstance.productSize.name.ToUpper() == p.tamanho.ToUpper()).SingleOrDefault();
+                        foreach(var instance in produto.productInstance.Take(3))
+                        {
+                            nomeProduto = instance.productSize.name;
+
+                            if(nomeProduto.ToUpper() == p.tamanho.ToUpper())
+                            {
+                                if (instance.cost > maiorSabor)
+                                {
+                                    maiorSabor = instance.cost;
+                                }
+                            }
+                            
+                        }
+                    }
+                    totalPedido += maiorSabor;
+                    maiorSabor = 0;
+                }
+
+                bebidas = pizzaria.menus.Where(p => p.productType.ToString().ToUpper() == "BEVERAGE").ToList<Product>();
+
+                foreach (BebidasSelecionadas b in bebidasSelecionadas)
+                {
+                    var bebida = bebidas.Where(be => be.Id == b.key).SingleOrDefault();
+                    //var instance = bebida.productInstance.Where(pInstance => pInstance.productSize.name.ToUpper() == b.tamanho.ToUpper()).SingleOrDefault();
+                    var nomeProduto = "";
+                    foreach (var instance in bebida.productInstance.Take(3))
+                        {
+                            nomeProduto = instance.productSize.name;
+
+                            if(nomeProduto.ToUpper() == b.tamanho.ToUpper())
+                            {
+                                if (instance.cost > maiorSabor)
+                                {
+                                    maiorSabor = instance.cost;
+                                }
+                            }
+                            
+                        }
+                }
+
+            }
+            return totalPedido.ToString();
         }
     }
 }
