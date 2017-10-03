@@ -13,7 +13,7 @@ namespace DAO.Context
 {
     public class JuditeBotContext : DbContext
     {
-        public JuditeBotContext() : base("name=juditebotdbEntities")//base("JuditeBot")
+        public JuditeBotContext() : base("JuditeBot")//base("name=juditebotdbEntities")//base("JuditeBot")
         {
 
         }
@@ -26,6 +26,7 @@ namespace DAO.Context
         public DbSet<ProductSize> productSizes { get; set; }
         public DbSet<PedidoTemporario> pedidoTemporario { get; set; }
         public DbSet<CPaymentMethod> paymentMethod { get; set; }
+        public DbSet<Client> client { get; set; }
 
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

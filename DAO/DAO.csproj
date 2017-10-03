@@ -55,7 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BBL\CPaymentMethod.cs" />
+    <Compile Include="BBL\ClientRepositorio.cs" />
+    <Compile Include="BBL\CPaymentMethodRepositorio.cs" />
     <Compile Include="BBL\PedidoRepositorio.cs" />
     <Compile Include="BBL\PedidoTemporarioRepositorio.cs" />
     <Compile Include="BBL\PizzariaRepositorio.cs" />

@@ -8,6 +8,6 @@ namespace JuditeBot.Model
     public class Items
     {
         public List<Products> products { get; set; }
-        public List<Products> mixedPizzas { get; set; }
+        public List<Products[]> mixedPizzas { get; set; }
     }
 }

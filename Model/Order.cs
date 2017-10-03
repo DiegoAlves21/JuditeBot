@@ -29,5 +29,8 @@ namespace Model
 
         //public int mixedPizzaId { get; set; }
         public virtual IList<MixedPizza> mixedPizzas { get; set; }
+
+        public int clientId { get; set; }
+        public virtual Client client { get; set; }
     }
 }

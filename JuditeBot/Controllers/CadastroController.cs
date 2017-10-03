@@ -1,6 +1,7 @@
 ﻿using DAO;
 using DAO.BBL;
 using DAO.MapperManual;
+using Microsoft.Bot.Connector;
 using Microsoft.CSharp.RuntimeBinder;
 using Model;
 using Model.Enum;
@@ -11,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
 
@@ -23,117 +25,128 @@ namespace JuditeBot.Controllers
         [Route("signup")]
         [HttpPost]
         public IHttpActionResult signup()
+        //public virtual async Task<IHttpActionResult> signup()
         {
             try
             {
-                //Pizzaria pizzaria = new Pizzaria();
-                //PizzariaRepositorio repositorio = new PizzariaRepositorio();
+                Pizzaria pizzaria = new Pizzaria();
+                PizzariaRepositorio repositorio = new PizzariaRepositorio();
 
-                ////Incluindo usuários
-                //IList<Users> usuarios = new List<Users>();
-                //usuarios.Add(new Users { username = "diego", password = "123" });
-                //usuarios.Add(new Users { username = "victor", password = "123" });
-                //usuarios.Add(new Users { username = "leo", password = "123" });
-                //pizzaria.users = usuarios;
+                //Incluindo usuários
+                IList<Users> usuarios = new List<Users>();
+                usuarios.Add(new Users { username = "diego", password = "123" });
+                usuarios.Add(new Users { username = "victor", password = "123" });
+                usuarios.Add(new Users { username = "leo", password = "123" });
+                pizzaria.users = usuarios;
 
-                ////Incluindo métodos de pagamento
-                //IList<CPaymentMethod> metodosPagamento = new List<CPaymentMethod> { new CPaymentMethod { paymentMethod = PaymentMethod.CREDIT }, new CPaymentMethod { paymentMethod = PaymentMethod.DEBIT }, new CPaymentMethod { paymentMethod = PaymentMethod.SODEXO }, new CPaymentMethod { paymentMethod = PaymentMethod.TR } };
-                //pizzaria.paymentMethods = metodosPagamento;
+                //Incluindo métodos de pagamento
+                IList<CPaymentMethod> metodosPagamento = new List<CPaymentMethod> { new CPaymentMethod { paymentMethod = PaymentMethod.CREDIT }, new CPaymentMethod { paymentMethod = PaymentMethod.DEBIT }, new CPaymentMethod { paymentMethod = PaymentMethod.SODEXO }, new CPaymentMethod { paymentMethod = PaymentMethod.TR } };
+                pizzaria.paymentMethods = metodosPagamento;
 
-                ////Incluindo produtos
-                //IList<Product> menus = new List<Product>();
+                //Incluindo produtos
+                IList<Product> menus = new List<Product>();
 
-                //Product pizza = new Product { name = "Muzzarela", productType = ProductType.PIZZA };
-                //Product pizzaCalabresa = new Product { name = "Calabresa", productType = ProductType.PIZZA };
-                //Product pizzaQuatroQueijos = new Product { name = "Quatro Queijos", productType = ProductType.PIZZA };
-                //Product pizzaPeperoni = new Product { name = "Peperoni", productType = ProductType.PIZZA };
-                //Product bebida = new Product { name = "Coca Cola", productType = ProductType.BEVERAGE };
-                //Product bebidaDelVale = new Product { name = "Del Vale Uva", productType = ProductType.BEVERAGE };
-                //Product bebidaH2oh = new Product { name = "H2oh", productType = ProductType.BEVERAGE };
+                Product pizza = new Product { name = "Muzzarela", productType = ProductType.PIZZA };
+                Product pizzaCalabresa = new Product { name = "Calabresa", productType = ProductType.PIZZA };
+                Product pizzaQuatroQueijos = new Product { name = "Quatro Queijos", productType = ProductType.PIZZA };
+                Product pizzaPeperoni = new Product { name = "Peperoni", productType = ProductType.PIZZA };
+                Product bebida = new Product { name = "Coca Cola", productType = ProductType.BEVERAGE };
+                Product bebidaDelVale = new Product { name = "Del Vale Uva", productType = ProductType.BEVERAGE };
+                Product bebidaH2oh = new Product { name = "H2oh", productType = ProductType.BEVERAGE };
 
-                //List<ProductInstance> productInstancePizza = new List<ProductInstance>();
-                //List<ProductInstance> productInstancePizzaCalabresa = new List<ProductInstance>();
-                //List<ProductInstance> productInstancePizzaQuatroQueijos = new List<ProductInstance>();
-                //List<ProductInstance> productInstancePizzaPeperoni = new List<ProductInstance>();
-                //List<ProductInstance> productInstanceBebida = new List<ProductInstance>();
-                //List<ProductInstance> productInstanceBebidaDelVale = new List<ProductInstance>();
-                //List<ProductInstance> productInstanceBebidaH2oh = new List<ProductInstance>();
+                List<ProductInstance> productInstancePizza = new List<ProductInstance>();
+                List<ProductInstance> productInstancePizzaCalabresa = new List<ProductInstance>();
+                List<ProductInstance> productInstancePizzaQuatroQueijos = new List<ProductInstance>();
+                List<ProductInstance> productInstancePizzaPeperoni = new List<ProductInstance>();
+                List<ProductInstance> productInstanceBebida = new List<ProductInstance>();
+                List<ProductInstance> productInstanceBebidaDelVale = new List<ProductInstance>();
+                List<ProductInstance> productInstanceBebidaH2oh = new List<ProductInstance>();
 
-                ////ProductSize productSizeBig = new ProductSize { name = "Grande" };
-                ////ProductSize productSizeMedium = new ProductSize { name = "Médio" };
-                ////ProductSize productSizeBebida = new ProductSize { name = "2 litros" };
+                //ProductSize productSizeBig = new ProductSize { name = "Grande" };
+                //ProductSize productSizeMedium = new ProductSize { name = "Médio" };
+                //ProductSize productSizeBebida = new ProductSize { name = "2 litros" };
 
-                //productInstancePizza.Add(new ProductInstance { cost = 30.00, productSize = new ProductSize { name = "Grande" }, available = true });
-                //productInstancePizza.Add(new ProductInstance { cost = 20.00, productSize = new ProductSize { name = "Medio" }, available = true });
-                //productInstancePizza.Add(new ProductInstance { cost = 10.00, productSize = new ProductSize { name = "Pequeno" }, available = true });
-                ////
-                //productInstancePizzaCalabresa.Add(new ProductInstance { cost = 25.00, productSize = new ProductSize { name = "Grande" }, available = true });
-                //productInstancePizzaCalabresa.Add(new ProductInstance { cost = 15.00, productSize = new ProductSize { name = "Medio" }, available = true });
-                //productInstancePizzaCalabresa.Add(new ProductInstance { cost = 8.00, productSize = new ProductSize { name = "Pequeno" }, available = true });
-                ////
-                //productInstancePizzaQuatroQueijos.Add(new ProductInstance { cost = 35.00, productSize = new ProductSize { name = "Grande" }, available = true });
-                //productInstancePizzaQuatroQueijos.Add(new ProductInstance { cost = 25.00, productSize = new ProductSize { name = "Medio" }, available = true });
-                //productInstancePizzaQuatroQueijos.Add(new ProductInstance { cost = 15.00, productSize = new ProductSize { name = "Pequeno" }, available = true });
-                ////
-                //productInstancePizzaPeperoni.Add(new ProductInstance { cost = 30.00, productSize = new ProductSize { name = "Grande" }, available = true });
-                //productInstancePizzaPeperoni.Add(new ProductInstance { cost = 20.00, productSize = new ProductSize { name = "Medio" }, available = true });
-                //productInstancePizzaPeperoni.Add(new ProductInstance { cost = 10.00, productSize = new ProductSize { name = "Pequeno" }, available = true });
-                ////
-                //productInstanceBebida.Add(new ProductInstance { cost = 6.00, productSize = new ProductSize { name = "2 litros" }, available = true });
-                //productInstanceBebida.Add(new ProductInstance { cost = 2.00, productSize = new ProductSize { name = "500 ml" }, available = true });
-                //productInstanceBebida.Add(new ProductInstance { cost = 4.00, productSize = new ProductSize { name = "1 litro" }, available = true });
-                ////
-                //productInstanceBebidaDelVale.Add(new ProductInstance { cost = 5.00, productSize = new ProductSize { name = "2 litros" }, available = true });
-                //productInstanceBebidaDelVale.Add(new ProductInstance { cost = 2.00, productSize = new ProductSize { name = "500 ml" }, available = true });
-                //productInstanceBebidaDelVale.Add(new ProductInstance { cost = 3.00, productSize = new ProductSize { name = "1 litro" }, available = true });
-                ////
-                //productInstanceBebidaH2oh.Add(new ProductInstance { cost = 5.00, productSize = new ProductSize { name = "2 litros" }, available = true });
-                //productInstanceBebidaH2oh.Add(new ProductInstance { cost = 2.00, productSize = new ProductSize { name = "500 ml" }, available = true });
-                //productInstanceBebidaH2oh.Add(new ProductInstance { cost = 3.00, productSize = new ProductSize { name = "1 litro" }, available = true });
-                ////
-                //bebida.productInstance = productInstanceBebida;
-                //bebidaDelVale.productInstance = productInstanceBebidaDelVale;
-                //bebidaH2oh.productInstance = productInstanceBebidaH2oh;
-                ////
-                //pizza.productInstance = productInstancePizza;
-                //pizzaCalabresa.productInstance = productInstancePizzaCalabresa;
-                //pizzaPeperoni.productInstance = productInstancePizzaPeperoni;
-                //pizzaQuatroQueijos.productInstance = productInstancePizzaQuatroQueijos;
-                ////
-                //menus.Add(pizza);
-                //menus.Add(pizzaCalabresa);
-                //menus.Add(pizzaPeperoni);
-                //menus.Add(pizzaQuatroQueijos);
-                ////
-                //menus.Add(bebida);
-                //menus.Add(bebidaDelVale);
-                //menus.Add(bebidaH2oh);
-                ////
-                //pizzaria.menus = menus;
-                //pizzaria.name = "Pizzaria teste";
-                //pizzaria.deliveryTax = 10.00;
+                productInstancePizza.Add(new ProductInstance { cost = 30.00, productSize = new ProductSize { name = "Grande" }, available = true });
+                productInstancePizza.Add(new ProductInstance { cost = 20.00, productSize = new ProductSize { name = "Medio" }, available = true });
+                productInstancePizza.Add(new ProductInstance { cost = 10.00, productSize = new ProductSize { name = "Pequeno" }, available = true });
+                //
+                productInstancePizzaCalabresa.Add(new ProductInstance { cost = 25.00, productSize = new ProductSize { name = "Grande" }, available = true });
+                productInstancePizzaCalabresa.Add(new ProductInstance { cost = 15.00, productSize = new ProductSize { name = "Medio" }, available = true });
+                productInstancePizzaCalabresa.Add(new ProductInstance { cost = 8.00, productSize = new ProductSize { name = "Pequeno" }, available = true });
+                //
+                productInstancePizzaQuatroQueijos.Add(new ProductInstance { cost = 35.00, productSize = new ProductSize { name = "Grande" }, available = true });
+                productInstancePizzaQuatroQueijos.Add(new ProductInstance { cost = 25.00, productSize = new ProductSize { name = "Medio" }, available = true });
+                productInstancePizzaQuatroQueijos.Add(new ProductInstance { cost = 15.00, productSize = new ProductSize { name = "Pequeno" }, available = true });
+                //
+                productInstancePizzaPeperoni.Add(new ProductInstance { cost = 30.00, productSize = new ProductSize { name = "Grande" }, available = true });
+                productInstancePizzaPeperoni.Add(new ProductInstance { cost = 20.00, productSize = new ProductSize { name = "Medio" }, available = true });
+                productInstancePizzaPeperoni.Add(new ProductInstance { cost = 10.00, productSize = new ProductSize { name = "Pequeno" }, available = true });
+                //
+                productInstanceBebida.Add(new ProductInstance { cost = 6.00, productSize = new ProductSize { name = "2 litros" }, available = true });
+                productInstanceBebida.Add(new ProductInstance { cost = 2.00, productSize = new ProductSize { name = "500 ml" }, available = true });
+                productInstanceBebida.Add(new ProductInstance { cost = 4.00, productSize = new ProductSize { name = "1 litro" }, available = true });
+                //
+                productInstanceBebidaDelVale.Add(new ProductInstance { cost = 5.00, productSize = new ProductSize { name = "2 litros" }, available = true });
+                productInstanceBebidaDelVale.Add(new ProductInstance { cost = 2.00, productSize = new ProductSize { name = "500 ml" }, available = true });
+                productInstanceBebidaDelVale.Add(new ProductInstance { cost = 3.00, productSize = new ProductSize { name = "1 litro" }, available = true });
+                //
+                productInstanceBebidaH2oh.Add(new ProductInstance { cost = 5.00, productSize = new ProductSize { name = "2 litros" }, available = true });
+                productInstanceBebidaH2oh.Add(new ProductInstance { cost = 2.00, productSize = new ProductSize { name = "500 ml" }, available = true });
+                productInstanceBebidaH2oh.Add(new ProductInstance { cost = 3.00, productSize = new ProductSize { name = "1 litro" }, available = true });
+                //
+                bebida.productInstance = productInstanceBebida;
+                bebidaDelVale.productInstance = productInstanceBebidaDelVale;
+                bebidaH2oh.productInstance = productInstanceBebidaH2oh;
+                //
+                pizza.productInstance = productInstancePizza;
+                pizzaCalabresa.productInstance = productInstancePizzaCalabresa;
+                pizzaPeperoni.productInstance = productInstancePizzaPeperoni;
+                pizzaQuatroQueijos.productInstance = productInstancePizzaQuatroQueijos;
+                //
+                menus.Add(pizza);
+                menus.Add(pizzaCalabresa);
+                menus.Add(pizzaPeperoni);
+                menus.Add(pizzaQuatroQueijos);
+                //
+                menus.Add(bebida);
+                menus.Add(bebidaDelVale);
+                menus.Add(bebidaH2oh);
+                //
+                pizzaria.menus = menus;
+                pizzaria.name = "Pizzaria teste";
+                pizzaria.deliveryTax = 10.00;
 
-                //repositorio.AdicionarBBL(pizzaria);
+                repositorio.AdicionarBBL(pizzaria);
 
-                PedidoRepositorio pedidoRepositorio = new PedidoRepositorio();
-                Order order = new Order();
-                order.Address = "QUE SACOOOO";
-                order.clientName = "NÃO AGUENTO MAIS ESSE TCC";
-                order.created = DateTime.Now;
-                using (var repositorio = new CPaymentMethodRepositorio())
-                {
-                    order.paymentMethodId = repositorio.GetAll().ToList<CPaymentMethod>()[0].Id;
-                }
+                //PedidoRepositorio pedidoRepositorio = new PedidoRepositorio();
+                //Order order = new Order();
+                //order.Address = "Endereço Mixed Pizza";
+                //order.clientName = "Teste Mixed Pizza";
+                //order.created = DateTime.Now;
+                //using (var repositorio = new CPaymentMethodRepositorio())
+                //{
+                //    order.paymentMethodId = repositorio.GetAll().ToList<CPaymentMethod>()[0].Id;
+                //}
 
-                using (var repositorio = new ProductInstanceRepositorio())
-                {
-                    var product = repositorio.GetAll().Take(1).ToList<ProductInstance>();
-                    order.productInstances = product;
-                }
-                order.ordersStatus = OrderStatus.WAITING;
-                order.pizzariaId = 1;
+                ////using (var repositorio = new ProductInstanceRepositorio())
+                ////{
+                ////    var product = repositorio.GetAll().Take(1).ToList<ProductInstance>();
+                ////    order.productInstances = product;
+                ////}
 
-                pedidoRepositorio.AdicionarBBL(order);
+                //using (var repositorio = new ProductInstanceRepositorio())
+                //{
+                //    var product = repositorio.GetAll().Take(2).ToList<ProductInstance>();
+                //    order.mixedPizzas = new List<MixedPizza>();
+                //    MixedPizza mixed = new MixedPizza();
+                //    mixed.productInstances = product;
+                //    order.mixedPizzas.Add(mixed);
+                //}
+
+                //order.ordersStatus = OrderStatus.WAITING;
+                //order.pizzariaId = 1;
+
+                //pedidoRepositorio.AdicionarBBL(order);
 
 
                 //PizzariaRepositorio pizzariaRepositorio = new PizzariaRepositorio();
@@ -145,11 +158,14 @@ namespace JuditeBot.Controllers
 
                 //var pizzaria = repositorio.GetBBL(p => p.PizzariaId == 1);
 
+                //HttpResponseMessage x = await SendMessageToUser();
+                //return new HttpResponseMessage(x.StatusCode);
                 return Ok();
 
             }
             catch(Exception e)
             {
+                //return new HttpResponseMessage(System.Net.HttpStatusCode.InternalServerError);
                 return NotFound();
             }
         }
@@ -310,6 +326,54 @@ namespace JuditeBot.Controllers
             {
                 return null;
             }
+        }
+
+        public virtual async Task<HttpResponseMessage> SendMessageToUser()
+        {
+            try
+            {
+                string toId = "1193748407372016";
+                string toName = "Diego Alves";
+                string fromId = "166384633836246";
+                string fromName = "JuditeBot";
+                string serviceUrl = "https://facebook.botframework.com";
+                string channelId = "facebook";
+                string conversationId = "1193748407372016-166384633836246";
+
+                // Use the data stored previously to create the required objects.
+                var userAccount = new ChannelAccount(toId, toName);
+                var botAccount = new ChannelAccount(fromId, fromName);
+                var connector = new ConnectorClient(new Uri(serviceUrl));
+
+                // Create a new message.
+                IMessageActivity message = Activity.CreateMessageActivity();
+                if (!string.IsNullOrEmpty(conversationId) && !string.IsNullOrEmpty(channelId))
+                {
+                    // If conversation ID and channel ID was stored previously, use it.
+                    message.ChannelId = channelId;
+                }
+                else
+                {
+                    // Conversation ID was not stored previously, so create a conversation. 
+                    // Note: If the user has an existing conversation in a channel, this will likely create a new conversation window.
+                    conversationId = (await connector.Conversations.CreateDirectConversationAsync(botAccount, userAccount)).Id;
+                }
+
+                // Set the address-related properties in the message and send the message.
+                message.From = botAccount;
+                message.Recipient = userAccount;
+                message.Conversation = new ConversationAccount(id: conversationId);
+                message.Text = "Hello, this is a notification";
+                message.Locale = "en-us";
+                MicrosoftAppCredentials.TrustServiceUrl(serviceUrl);
+                await connector.Conversations.SendToConversationAsync((Activity)message);
+                return new HttpResponseMessage(System.Net.HttpStatusCode.Accepted);
+            }
+            catch(Exception e)
+            {
+                return new HttpResponseMessage(System.Net.HttpStatusCode.InternalServerError);
+            }
+            
         }
 
         //private dynamic cadastraCaracteristicasProduto()
