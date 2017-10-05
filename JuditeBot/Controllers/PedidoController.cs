@@ -27,63 +27,55 @@ namespace JuditeBot.Controllers
             get { return HttpContext.Current.GetOwinContext().Authentication; }
         }
 
-        //[Route("orders")]
-        //[HttpPost]
-        //public IHttpActionResult Cadastrar([FromBody] OrdersViewModel ordersViewModel)
-        //{
-        //    if (this.Authentication.User.Identity.IsAuthenticated)
-        //    {
-        //        try
-        //        {
-        //            Order order = ConvertOrdersViewModel(ordersViewModel);
+        [Route("orders")]
+        [HttpPost]
+        public IHttpActionResult Cadastrar([FromBody] OrdersViewModel ordersViewModel)
+        {
+            if (this.Authentication.User.Identity.IsAuthenticated)
+            {
+                try
+                {
+                    Order order = ConvertOrdersViewModel(ordersViewModel);
 
-        //            if (true == true)// Aqui entra as validações
-        //            {
-        //                PizzariaRepositorio pizzariaRepositorio = new PizzariaRepositorio();
-        //                var pizzariaId = int.Parse(this.Authentication.User.Claims.SingleOrDefault().Value);
-        //                var pizzaria = pizzariaRepositorio.Get(pi => pi.PizzariaId == pizzariaId).SingleOrDefault();
+                    if (true == true)// Aqui entra as validações
+                    {
+                        PizzariaRepositorio pizzariaRepositorio = new PizzariaRepositorio();
+                        var pizzariaId = int.Parse(this.Authentication.User.Claims.SingleOrDefault().Value);
+                        var pizzaria = pizzariaRepositorio.Get(pi => pi.PizzariaId == pizzariaId).SingleOrDefault();
 
-        //                pizzaria.orders.Add(order);
-        //                pizzariaRepositorio.AtualizarBBL(pizzaria);
+                        pizzaria.orders.Add(order);
+                        pizzariaRepositorio.AtualizarBBL(pizzaria);
 
-        //                return Created("Criado", ordersViewModel);
-        //            }
-        //            else
-        //            {
-        //                return new System.Web.Http.Results.ResponseMessageResult(
-        //                    Request.CreateErrorResponse(
-        //                        (HttpStatusCode)422,
-        //                        new HttpError("Erros de validação ocorreram")
-        //                    )
-        //                );
-        //            }
+                        return Created("Criado", ordersViewModel);
+                    }
+                    else
+                    {
+                        return new System.Web.Http.Results.ResponseMessageResult(
+                            Request.CreateErrorResponse(
+                                (HttpStatusCode)422,
+                                new HttpError("Erros de validação ocorreram")
+                            )
+                        );
+                    }
 
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            return InternalServerError(e);
-        //        }
+                }
+                catch (Exception e)
+                {
+                    return InternalServerError(e);
+                }
 
-        //    }
-        //    else
-        //    {
-        //        return Unauthorized();
-        //    }
+            }
+            else
+            {
+                return Unauthorized();
+            }
 
-        //}
+        }
 
         [Route("orders")]
         [HttpGet]
-        public IHttpActionResult Listar(string from = "", int p = 0, int per_page = 0, string filterPaymentMethod = "", string filterStatus = "", string filterClientName = "", string s = "", string sDir = "")
+        public IHttpActionResult Listar(string from = "", int p = 0, int per_page = 0, string filterPaymentMethod = "", string s = "", string sDir = "", [FromUri] OrderFilter filter = null)
         {
-            //OrdersParam orderParam = new OrdersParam(); 
-            //int p = 0;
-            //int perPage = 0;
-            //string filterPaymentMethod = "CREDIT";
-            //string filterStatus = "";
-            //string filterClientName = "";
-            //string s = "";
-            //string sDir = "";
 
             if (this.Authentication.User.Identity.IsAuthenticated)
             {
@@ -92,10 +84,7 @@ namespace JuditeBot.Controllers
                     PizzariaRepositorio pizzariaRepositorio = new PizzariaRepositorio();
                     var pizzariaId = int.Parse(this.Authentication.User.Claims.SingleOrDefault().Value);
                     var pizzaria = pizzariaRepositorio.Get(pi => pi.PizzariaId == pizzariaId).SingleOrDefault();
-                    //var pedidos = pizzaria.orders.Where(o => o.paymentMethod.paymentMethod.ToString().ToUpper() == filterPaymentMethod).ToArray().Take(p);
-                    var pedidos = FilterDeviceList(pizzaria.orders, from, p, per_page, filterPaymentMethod, filterStatus, filterClientName, s, sDir);
-                    //var payment = pizzaria.orders.SingleOrDefault().paymentMethod.paymentMethod;
-                    //var status = pizzaria.orders.SingleOrDefault().ordersStatus.ToString();
+                    var pedidos = FilterDeviceList(pizzaria.orders, from, p, per_page, filterPaymentMethod, s, sDir, filter);
 
                     List<OrdersModelView> ordersModelView = new List<OrdersModelView>();
 
@@ -118,15 +107,24 @@ namespace JuditeBot.Controllers
 
         }
 
-        private static IEnumerable<Order> FilterDeviceList(IList<Order> orders, string from, int p, int perPage, string filterPaymentMethod, string filterStatus, string filterClientName, string s, string sDir)
+        private static IEnumerable<Order> FilterDeviceList(IList<Order> orders, string from, int p, int perPage, string filterPaymentMethod, string s, string sDir, OrderFilter orderFilter)
         {
-            //var query = orders.AsQueryable();
 
             var pedidos = orders;
 
-            if (filterClientName != "" && filterClientName != null)
+            if ((orderFilter.clientName != "" && orderFilter.clientName != null) && (orderFilter.status != "" && orderFilter.status != null))
             {
-                pedidos = pedidos.Where(ord => ord.clientName.ToUpper() == filterClientName.ToUpper()).ToArray();
+                pedidos = pedidos.Where(ord => ord.clientName.ToString().ToUpper().Contains(orderFilter.clientName.ToUpper()) && ord.ordersStatus.ToString().ToUpper() == ChangeStatusNameToBD(orderFilter.status.ToUpper())).ToArray();
+                return pedidos;
+            }
+            else if (orderFilter.clientName != "" && orderFilter.clientName != null)
+            {
+                pedidos = pedidos.Where(ord => ord.clientName.ToString().ToUpper().Contains(orderFilter.clientName.ToUpper())).ToArray();
+                return pedidos;
+            }
+            else if (orderFilter.status != "" && orderFilter.status != null)
+            {
+                pedidos = pedidos.Where(ord => ord.ordersStatus.ToString().ToUpper() == ChangeStatusNameToBD(orderFilter.status.ToUpper())).ToArray();
                 return pedidos;
             }
             else if (filterPaymentMethod != null && filterPaymentMethod != "")
@@ -134,44 +132,10 @@ namespace JuditeBot.Controllers
                 pedidos = pedidos.Where(ord => ord.paymentMethod.paymentMethod.ToString().ToUpper() == filterPaymentMethod.ToUpper()).ToArray();
                 return pedidos;
             }
-            else if (filterStatus != null && filterStatus != "")
-            {
-                pedidos = pedidos.Where(ord => ord.ordersStatus.ToString().ToUpper() == filterStatus.ToUpper()).ToArray();
-                return pedidos;
-            }
             else
             {
                 return pedidos;
             }
-
-            ///VERIFICAR E REFAZER PARA FUNCIONAMENTO CORRETO    
-            ///if (filterPaymentMethod != null)
-            ///{
-            ///    query = query.Where(ord => ord.paymentMethod == filterPaymentMethod);
-            ///}
-            ///if (filterStatus != null)
-            ///{
-            ///    query = query.Where(ord => ord.ordersStatus == filterStatus);
-            ///}
-
-            /*if (perPage != 0)
-            {
-                query = query.Take(perPage);
-            }*/
-
-            //ordenação
-            /*if (sDir != null)
-            {
-                if (sDir == "ASC")
-                {
-                    pedidos = pedidos.OrderBy(ord => ord.clientName);
-                }
-                else
-                {
-                    pedidos = pedidos.OrderByDescending(ord => ord.clientName);
-                }
-
-            }*/
             
         }
 
@@ -434,13 +398,6 @@ namespace JuditeBot.Controllers
         {
             try
             {
-                //string toId = "1193748407372016";
-                //string toName = "Diego Alves";
-                //string fromId = "166384633836246";
-                //string fromName = "JuditeBot";
-                //string serviceUrl = "https://facebook.botframework.com";
-                //string channelId = "facebook";
-                //string conversationId = "1193748407372016-166384633836246";
 
                 Order order = new Order();
                 Client client = new Client();
@@ -478,7 +435,7 @@ namespace JuditeBot.Controllers
                 message.From = botAccount;
                 message.Recipient = userAccount;
                 message.Conversation = new ConversationAccount(id: client.conversationId);
-                message.Text = ChangeStatusName(newStatus);
+                message.Text = "Olá " + client.toName + ", o status do seu pedido foi alterado para: " + ChangeStatusName(newStatus);
                 message.Locale = "en-us";
                 MicrosoftAppCredentials.TrustServiceUrl(client.serviceUrl);
                 await connector.Conversations.SendToConversationAsync((Activity)message);
@@ -579,6 +536,30 @@ namespace JuditeBot.Controllers
             else
             {
                 return "Cancelado";
+            }
+        }
+
+        private static string ChangeStatusNameToBD(string name)
+        {
+            if (name.ToUpper() == "PENDENTE")
+            {
+                return "WAITING";
+            }
+            else if (name.ToUpper() == "EM PREPARO")
+            {
+                return "PREPARING";
+            }
+            else if (name.ToUpper() == "SAIU PARA ENTREGA")
+            {
+                return "OUT_FOR_DELIVERY";
+            }
+            else if (name.ToUpper() == "FINALIZADO")
+            {
+                return "DONE";
+            }
+            else
+            {
+                return "CANCELED";
             }
         }
 

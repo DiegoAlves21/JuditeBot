@@ -1,4 +1,5 @@
 ﻿using DAO.BBL;
+using Microsoft.Ajax.Utilities;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using Model;
@@ -27,7 +28,6 @@ namespace JuditeBot.Bot
         protected double totalBebida { get; set; }
         protected List<string> tamanhos { get; set; }
         protected Dictionary<int, string> sabores { get; set; }
-        //protected Dictionary<int, string> saboresTamanho { get; set; }
         protected Dictionary<int, string> bebidas { get; set; }
         protected Dictionary<int, string> saboresSelecionados { get; set; }
         protected List<PizzasSelecionadas> pizzasSelecionadas { get; set; }
@@ -334,8 +334,8 @@ namespace JuditeBot.Bot
             List<Product> produtos = new List<Product>();
             using (var repositorio = new PizzariaRepositorio())
             {
-                var pizzaria = repositorio.Get(p => p.PizzariaId == idPizzaria).SingleOrDefault();
-                produtos = pizzaria.menus.Where(p => p.productType.ToString().ToUpper() == "PIZZA").ToList<Product>();
+                var pizzaria = (Pizzaria)repositorio.Get(p => p.PizzariaId == idPizzaria).SingleOrDefault();
+                produtos = pizzaria.menus.Where(p => p.productType.ToString().ToUpper() == "PIZZA").DistinctBy(a => a.name).ToList<Product>();
             }
 
             List<CardAction> cardButtons = new List<CardAction>();
@@ -386,30 +386,6 @@ namespace JuditeBot.Bot
 
             Attachment plAttachment = plCard.ToAttachment();
 
-            //AdaptiveCard card = new AdaptiveCard();
-
-            //card.Body.Add(new TextBlock() { Text = "Escolha a sua pizza" });
-            //card.BackgroundImage = "https://1.bp.blogspot.com/-6ziUbuUGS1I/VuHuua1N2hI/AAAAAAAAAVI/eU17sMzkpLI-npKJPwypY_dU4gGf7Epaw/s1600/CARDAPIO.png";
-
-            //var choices = new List<Choice>();
-
-            //foreach (var produto in produtos)
-            //{
-            //    choices.Add(new Choice() { Title = produto.name , Value = produto.name });
-            //}
-
-            //card.Body.Add(new ChoiceSet() {
-            //    Id = "snooze",
-            //    Style = ChoiceInputStyle.Compact,
-            //    Choices = choices
-            //});
-
-            //Attachment plAttachment = new Attachment()
-            //{
-            //    ContentType = AdaptiveCard.ContentType,
-            //    Content = card
-            //};
-
             return plAttachment;
         }
 
@@ -420,7 +396,7 @@ namespace JuditeBot.Bot
             using (var repositorio = new PizzariaRepositorio())
             {
                 var pizzaria = repositorio.Get(p => p.PizzariaId == idPizzaria).SingleOrDefault();
-                produtos = pizzaria.menus.Where(p => p.productType.ToString().ToUpper() == "BEVERAGE").ToList<Product>();
+                produtos = pizzaria.menus.Where(p => p.productType.ToString().ToUpper() == "BEVERAGE").DistinctBy(a => a.name).ToList<Product>();
             }
 
             List<CardAction> cardButtons = new List<CardAction>();
@@ -588,8 +564,8 @@ namespace JuditeBot.Bot
                     Facts = new List<Fact> { new Fact("Order Number", "Aguardando Confirmação"), new Fact("Payment Method", ChangePaymentName(GetPaymentMethod(int.Parse(pagamento)))) },
                     Items = new List<ReceiptItem>
             {
-                new ReceiptItem("Pizza", price: totalPizza.ToString(), quantity: pizzasSelecionadas.Count.ToString(), image: new CardImage(url: "https://github.com/amido/azure-vector-icons/raw/master/renders/traffic-manager.png")),
-                new ReceiptItem("Bebida", price: totalBebida.ToString(), quantity: bebidasSelecionadas.Count.ToString(), image: new CardImage(url: "https://github.com/amido/azure-vector-icons/raw/master/renders/cloud-service.png")),
+                new ReceiptItem("Pizza", price: totalPizza.ToString(), quantity: pizzasSelecionadas.Count.ToString(), image: new CardImage(url: "http://www.cantinadelivery.com.br/produtos/13022.jpg")),
+                new ReceiptItem("Bebida", price: totalBebida.ToString(), quantity: bebidasSelecionadas.Count.ToString(), image: new CardImage(url: "http://www.mosaicoarraial.com.br/wp-content/uploads/2017/05/beb10-200x200.jpg")),
             },
                     Tax = this.frete.ToString(),
                     Total = (this.totalPedido + this.frete).ToString() /*,
@@ -724,7 +700,6 @@ namespace JuditeBot.Bot
                 client.channelId = activity.ChannelId;
                 client.conversationId = activity.Conversation.Id;
 
-                //clientRepositorio.AdicionarBBL(client);
 
                 //Armazenando o pedido e atrelando o cliente da mensagem
                 PedidoRepositorio pedidoRepositorio = new PedidoRepositorio();

@@ -13,7 +13,7 @@ namespace DAO.Context
 {
     public class JuditeBotContext : DbContext
     {
-        public JuditeBotContext() : base("JuditeBot")//base("name=juditebotdbEntities")//base("JuditeBot")
+        public JuditeBotContext() : base("name=juditebotdbEntities")
         {
 
         }
@@ -28,27 +28,8 @@ namespace DAO.Context
         public DbSet<CPaymentMethod> paymentMethod { get; set; }
         public DbSet<Client> client { get; set; }
 
-
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    var stringConexao = ConfigurationManager.ConnectionStrings[0].ConnectionString;
-        //    //string stringConexao = ConfigurationManager.ConnectionStrings["JuditeBotBDConnectionString"].ConnectionString;
-
-
-        //    optionsBuilder.UseSqlServer(stringConexao);
-        //    base.OnConfiguring(optionsBuilder);
-        //}
-
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            // modelBuilder.Entity<Order>()
-            // .HasMany(t => t.productInstances)
-            // .WithMany(t => t.orders);
-
-            // modelBuilder.Entity<ProductInstance>()
-            //.HasMany(t => t.orders)
-            //.WithMany(t => t.productInstances);
-
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
         }
     }

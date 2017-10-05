@@ -17,9 +17,6 @@ namespace JuditeBot.Bot
     public class MessagesController : ApiController
     {
 
-        //const string id = "8655481";
-
-
         /// <summary>
         /// POST: JuditeBot/Messages
         /// Receive a message from a user and reply to it

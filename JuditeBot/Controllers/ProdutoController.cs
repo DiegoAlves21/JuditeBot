@@ -31,14 +31,6 @@ namespace JuditeBot.Controllers
         [HttpGet]
         public IHttpActionResult Listar(string name, string size, string type, bool? available, int p, int per_page, string s, string s_dir)
         {
-            /*name = null;
-            size = null;
-            type = null;
-            available = null;
-            p = 0;
-            per_page = 0;
-            s = null;
-            s_dir = null;*/
 
             if (this.Authentication.User.Identity.IsAuthenticated)
             {
@@ -167,8 +159,6 @@ namespace JuditeBot.Controllers
                         produtoRepositorio.Excluir(pro => pro.Id == productId);
                         produtoRepositorio.SalvarTodos();
 
-                        /*pizzaria.menus.RemoveAt(pizzaria.menus.IndexOf(pizzaria.menus.Where(pro => pro.Id == productId).SingleOrDefault()));
-                        pizzariaRepositorio.AtualizarBBL(pizzaria);*/
                     }
                     else
                     {

@@ -600,8 +600,8 @@
     </Compile>
     <Compile Include="Model\Instances.cs" />
     <Compile Include="Model\Items.cs" />
+    <Compile Include="Model\OrderFilter.cs" />
     <Compile Include="Model\OrdersModelView.cs" />
-    <Compile Include="Model\OrdersParam.cs" />
     <Compile Include="Model\OrdersViewModel.cs" />
     <Compile Include="Model\Products.cs" />
     <Compile Include="Model\ProductViewModel.cs" />
